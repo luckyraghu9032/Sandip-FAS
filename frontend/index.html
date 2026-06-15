@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sandip University FAS Management System - Integrated academic coordination portal for Students, Coordinators, and HODs.">
+  <title>FAS Portal | Sandip University</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="public/favicon.svg">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar fade-in-down">
+    <div class="container navbar-container">
+      <div class="navbar-brand">
+        <i data-lucide="book-open" class="icon icon-blue"></i>
+        <div class="brand-text">
+          <span class="brand-title">Sandip University</span>
+          <span class="brand-subtitle">FAS Management</span>
+        </div>
+      </div>
+      <div class="navbar-links">
+        <a href="#portals" class="nav-link">Portals</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </div>
+      <button class="mobile-menu-btn" id="mobile-menu-btn">
+        <i data-lucide="menu"></i>
+      </button>
+    </div>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="#portals" class="mobile-nav-link">Portals</a>
+      <a href="#about" class="mobile-nav-link">About</a>
+      <a href="#contact" class="mobile-nav-link">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero hero-gradient">
+    <!-- Floating dots -->
+    <div class="floating-dots">
+      <div class="dot floating-dot"></div>
+      <div class="dot floating-dot"></div>
+      <div class="dot floating-dot"></div>
+      <div class="dot floating-dot"></div>
+      <div class="dot floating-dot"></div>
+    </div>
+    <div class="container hero-container fade-in-up">
+      <span class="badge fade-in-up" style="animation-delay: 0.1s;">Faculty Academic System</span>
+      <h1 class="hero-title fade-in-up" style="animation-delay: 0.2s;">
+        Streamline Academic <br />
+        <span class="text-gold">Coordination</span>
+      </h1>
+      <p class="hero-subtitle fade-in-up" style="animation-delay: 0.3s;">
+        The central hub for HODs, Coordinators, and Students to manage the Faculty Academic System effortlessly.
+      </p>
+      <div class="hero-actions fade-in-up" style="animation-delay: 0.4s;">
+        <a href="#portals" class="btn btn-primary">Access Portals <i data-lucide="arrow-right"></i></a>
+        <a href="#about" class="btn btn-outline">Learn More</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Portals Section -->
+  <section id="portals" class="section portals-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <p class="section-badge">Select Your Portal</p>
+        <h2 class="section-title">Choose Your Access Point</h2>
+        <p class="section-subtitle">Login to your designated portal based on your university role.</p>
+        <div class="divider">
+          <div class="line"></div>
+          <div class="dot-gold"></div>
+          <div class="line"></div>
+        </div>
+      </div>
+      <div class="portals-grid">
+        <!-- HOD Portal -->
+        <div class="portal-card card-glow" onclick="openLoginModal('HOD Portal')">
+          <div class="portal-icon-wrapper bg-blue-light">
+            <i data-lucide="briefcase" class="icon-lg text-blue"></i>
+          </div>
+          <h3 class="portal-title">HOD Portal</h3>
+          <p class="portal-desc">Manage coordinators and division allocations. Oversee departmental academic activities.</p>
+          <div class="portal-action text-blue">
+            <span>Access Portal</span>
+            <i data-lucide="arrow-right" class="icon-sm"></i>
+          </div>
+        </div>
+        <!-- Coordinator Portal -->
+        <div class="portal-card card-glow" onclick="openLoginModal('Coordinator Portal')">
+          <div class="portal-icon-wrapper bg-emerald-light">
+            <i data-lucide="users" class="icon-lg text-emerald"></i>
+          </div>
+          <h3 class="portal-title">Coordinator Portal</h3>
+          <p class="portal-desc">Manage student data and FAS forms. Coordinate academic submissions and reviews.</p>
+          <div class="portal-action text-emerald">
+            <span>Access Portal</span>
+            <i data-lucide="arrow-right" class="icon-sm"></i>
+          </div>
+        </div>
+        <!-- Student Portal -->
+        <div class="portal-card card-glow" onclick="openLoginModal('Student Portal')">
+          <div class="portal-icon-wrapper bg-violet-light">
+            <i data-lucide="graduation-cap" class="icon-lg text-violet"></i>
+          </div>
+          <h3 class="portal-title">Student Portal</h3>
+          <p class="portal-desc">Access and update your FAS profile. Submit academic records and track progress.</p>
+          <div class="portal-action text-violet">
+            <span>Access Portal</span>
+            <i data-lucide="arrow-right" class="icon-sm"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="section bg-white border-t">
+    <div class="container text-center max-w-md">
+      <h2 class="section-title mb-6">About Sandip University</h2>
+      <p class="section-subtitle">
+        Sandip University is committed to nurturing global leaders through quality education,
+        cutting-edge research, and holistic development. The FAS Management System digitizes
+        academic coordination, ensuring seamless collaboration between students, faculty, and
+        administration.
+      </p>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="section bg-slate border-t">
+    <div class="container text-center max-w-md">
+      <h2 class="section-title mb-6">Contact Support</h2>
+      <p class="section-subtitle mb-2">For technical assistance, reach out to the IT Helpdesk.</p>
+      <p class="contact-email">support@sandipuniversity.edu.in</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-brand">
+        <i data-lucide="book-open" class="icon-sm text-gold"></i>
+        <span>Sandip University FAS Management System</span>
+      </div>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+      <p class="footer-copyright">&copy; 2026 Sandip University. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Login Modal -->
+  <div class="modal-backdrop" id="login-modal" style="display: none;">
+    <div class="modal-container">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeLoginModal()">
+          <i data-lucide="x"></i>
+        </button>
+        <div class="modal-header">
+          <div class="modal-icon-wrapper" id="modal-icon-bg">
+            <i data-lucide="user" class="icon-lg" id="modal-icon"></i>
+          </div>
+          <h2 class="modal-title" id="modal-title">Portal Login</h2>
+          <p class="modal-subtitle">Enter your credentials to continue</p>
+        </div>
+        <form class="modal-form" id="login-form">
+          <div class="form-group" id="username-group">
+            <label for="username" class="form-label">Email Address</label>
+            <div class="input-wrapper">
+              <i data-lucide="mail" class="input-icon"></i>
+              <input type="email" id="username" name="username" class="form-input" placeholder="e.g. hod@sandipuniversity.edu.in" required>
+            </div>
+          </div>
+          <div class="form-group" id="prn-group" style="display: none;">
+            <label for="prnNumber" class="form-label">PRN Number</label>
+            <div class="input-wrapper">
+              <i data-lucide="hash" class="input-icon"></i>
+              <input type="text" id="prnNumber" name="prnNumber" class="form-input" placeholder="e.g. 2101010101" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <div class="input-wrapper">
+              <i data-lucide="lock" class="input-icon"></i>
+              <input type="password" id="password" name="password" class="form-input" placeholder="........" required>
+              <button type="button" id="toggle-password" class="password-toggle" style="display:none" tabindex="-1">
+                <i data-lucide="eye" id="toggle-password-icon"></i>
+              </button>
+            </div>
+          </div>
+          <div class="form-error" id="login-error" style="display: none;"></div>
+          <button type="submit" class="btn btn-primary btn-block" id="login-btn">
+            <span>Sign In</span>
+            <i data-lucide="arrow-right"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Scripts -->
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HOD Dashboard | FAS Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/svg+xml" href="public/favicon.svg">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container navbar-container" style="max-width: 100%; padding: 0 2rem;">
+      <div class="navbar-brand">
+        <i data-lucide="book-open" class="icon icon-blue"></i>
+        <div class="brand-text">
+          <span class="brand-title">Sandip University</span>
+          <span class="brand-subtitle">HOD Portal</span>
+        </div>
+      </div>
+      <div class="user-profile-nav">
+        <div class="user-name-desktop text-muted" id="user-display-name"></div>
+        <div class="profile-avatar" id="user-avatar" title="Toggle Menu">
+          <i data-lucide="user" class="icon-sm"></i>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="sidebar-overlay"></div>
+
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <a href="#overview" class="sidebar-link active">
+          <i data-lucide="layout-dashboard" class="icon-sm"></i>
+          Overview
+        </a>
+        <a href="#coordinator-roster" class="sidebar-link">
+          <i data-lucide="users" class="icon-sm"></i>
+          Coordinators
+        </a>
+        <a href="#reports" class="sidebar-link">
+          <i data-lucide="file-text" class="icon-sm"></i>
+          Reports
+        </a>
+        <div class="sidebar-footer-actions">
+          <a href="#" class="sidebar-link" onclick="openModal('change-password-modal')">
+            <i data-lucide="lock" class="icon-sm"></i>
+            Change Password
+          </a>
+          <a href="#" class="sidebar-link logout-link" onclick="logout()">
+            <i data-lucide="log-out" class="icon-sm"></i>
+            Logout
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content hod-main">
+      <section id="overview" class="dashboard-stack">
+        <div class="dashboard-header dashboard-header-split">
+          <div>
+            <p class="section-badge">Department Command Center</p>
+            <h1 class="dashboard-title">HOD Dashboard Overview</h1>
+            <p class="text-muted" id="welcome-msg"></p>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <article class="card stat-card">
+            <div class="stat-topline">
+              <span class="stat-icon bg-blue-light">
+                <i data-lucide="users" class="icon text-blue"></i>
+              </span>
+              <span class="stat-caption">Roster Health</span>
+            </div>
+            <p class="stat-label">Total Faculty</p>
+            <h2 class="stat-value" id="total-faculty">0</h2>
+            <p class="stat-help">Coordinators currently in the roster.</p>
+          </article>
+
+          <article class="card stat-card">
+            <div class="stat-topline">
+              <span class="stat-icon bg-emerald-light">
+                <i data-lucide="git-branch-plus" class="icon text-emerald"></i>
+              </span>
+              <span class="stat-caption">Coverage</span>
+            </div>
+            <p class="stat-label">Divisions Assigned</p>
+            <h2 class="stat-value" id="divisions-assigned">0</h2>
+            <p class="stat-help">Active division lanes mapped to faculty.</p>
+          </article>
+
+          <article class="card stat-card">
+            <div class="stat-topline">
+              <span class="stat-icon bg-violet-light">
+                <i data-lucide="clipboard-clock" class="icon text-violet"></i>
+              </span>
+              <span class="stat-caption">Oversight</span>
+            </div>
+            <p class="stat-label">Pending Reviews</p>
+            <h2 class="stat-value" id="pending-reviews">0</h2>
+            <p class="stat-help">Student meeting reports awaiting oversight.</p>
+          </article>
+
+
+        </div>
+      </section>
+
+      <section id="coordinators" class="workspace-grid">
+        <div class="workspace-column workspace-column-main">
+          <article class="card manual-coordinator-panel">
+            <div class="panel-header">
+              <div>
+                <p class="panel-eyebrow">Coordinator Access</p>
+                <h2 class="panel-title">Add Coordinator Manually</h2>
+              </div>
+              <span class="panel-chip panel-chip-neutral">Manual Entry</span>
+            </div>
+
+            <form class="manual-coordinator-form" id="manual-coordinator-form">
+              <div class="manual-coordinator-grid">
+                <div class="form-group">
+                  <label for="manual-coordinator-name" class="form-label">Coordinator Name</label>
+                  <div class="input-wrapper">
+                    <i data-lucide="user-round" class="input-icon"></i>
+                    <input type="text" id="manual-coordinator-name" class="form-input" placeholder="e.g. Rao MK" required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="manual-coordinator-email" class="form-label">Email Address</label>
+                  <div class="input-wrapper">
+                    <i data-lucide="mail" class="input-icon"></i>
+                    <input type="email" id="manual-coordinator-email" class="form-input" placeholder="e.g. rao@sandipuniversity.edu.in" required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="manual-coordinator-prn" class="form-label">PRN Number</label>
+                  <div class="input-wrapper">
+                    <i data-lucide="hash" class="input-icon"></i>
+                    <input type="text" id="manual-coordinator-prn" class="form-input" placeholder="e.g. 2101010101" required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="manual-coordinator-division" class="form-label">Allocated Division</label>
+                  <div class="input-wrapper">
+                    <i data-lucide="git-branch-plus" class="input-icon"></i>
+                    <select id="manual-coordinator-division" class="form-input form-select" required>
+                      <option value="">Choose division</option>
+                    </select>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="manual-coordinator-actions">
+                <p class="manual-coordinator-note">
+                  Choose a division from A to Z. The PRN is saved as the coordinator identifier and initial sign-in password.
+                </p>
+                <button type="submit" class="btn btn-primary" id="manual-coordinator-submit">
+                  <i data-lucide="user-plus"></i>
+                  Add Coordinator
+                </button>
+              </div>
+
+              <div class="form-error" id="manual-coordinator-error" style="display: none;"></div>
+              <div class="form-success" id="manual-coordinator-success" style="display: none;"></div>
+            </form>
+          </article>
+
+          <article class="card coordinator-roster-panel" id="coordinator-roster">
+            <div class="panel-header">
+              <div>
+                <p class="panel-eyebrow">Coordinator Directory</p>
+                <h2 class="panel-title">All Coordinators</h2>
+              </div>
+              <span class="panel-chip panel-chip-neutral" id="coordinator-roster-chip">0 total</span>
+            </div>
+
+            <div class="input-wrapper compact-input mb-4">
+              <i data-lucide="search" class="input-icon"></i>
+              <input type="search" id="coordinator-roster-search" class="form-input" placeholder="Search by name, email, PRN, or division">
+            </div>
+
+            <div class="table-shell">
+              <table class="allocation-table">
+                <thead>
+                  <tr>
+                    <th>Coordinator Name</th>
+                    <th>Email Address</th>
+                    <th>PRN Number</th>
+                    <th>Allocated Division</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="coordinator-roster-body"></tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="card allocation-card">
+            <div class="panel-header">
+              <div>
+                <p class="panel-eyebrow">Live Allocation Table</p>
+                <h2 class="panel-title">Allocated Divisions</h2>
+              </div>
+              <span class="panel-chip panel-chip-neutral" id="allocation-table-chip">0 assigned</span>
+            </div>
+
+            <div class="table-shell">
+              <table class="allocation-table">
+                <thead>
+                  <tr>
+                    <th>Coordinator Name</th>
+                    <th>PRN Number</th>
+                    <th>Assigned Division</th>
+                  </tr>
+                </thead>
+                <tbody id="allocation-table-body"></tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+
+
+      </section>
+
+      <section id="reports" class="reports-grid">
+        <article class="card reports-panel">
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">Oversight Queue</p>
+              <h2 class="panel-title">Pending Meeting Reviews</h2>
+            </div>
+            <span class="panel-chip panel-chip-neutral" id="report-chip">0 pending</span>
+          </div>
+          <div class="report-list" id="report-list"></div>
+        </article>
+
+        <article class="card payload-card">
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">Sync Payload</p>
+              <h2 class="panel-title">Ready for Backend Handoff</h2>
+            </div>
+          </div>
+          <div class="payload-summary" id="payload-summary">
+            The final division mapping payload will appear here before you send it to the backend.
+          </div>
+          <button type="button" class="btn btn-outline btn-dark" id="preview-payload-btn">
+            <i data-lucide="braces"></i>
+            Preview JSON Payload
+          </button>
+        </article>
+      </section>
+    </main>
+  </div>
+
+
+
+  <div class="modal-backdrop" id="payload-modal" style="display: none;">
+    <div class="modal-container modal-container-wide">
+      <div class="modal-content">
+        <button class="modal-close" type="button" id="close-payload-btn">
+          <i data-lucide="x"></i>
+        </button>
+        <div class="modal-header modal-header-left">
+          <div class="modal-icon-wrapper bg-blue-light">
+            <i data-lucide="database" class="icon-lg text-blue"></i>
+          </div>
+          <h2 class="modal-title">Final Allocation Payload</h2>
+          <p class="modal-subtitle">Review the JSON mapping bundle before it is sent to the backend.</p>
+        </div>
+        <pre class="payload-preview" id="payload-preview"></pre>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline btn-dark" id="payload-close-action">Close</button>
+          <button type="button" class="btn btn-primary" id="confirm-sync-btn">
+            <span>Sync to Database</span>
+            <i data-lucide="send"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="change-password-modal" style="display: none;">
+    <div class="modal-container">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('change-password-modal')">
+          <i data-lucide="x"></i>
+        </button>
+        <div class="modal-header">
+          <div class="modal-icon-wrapper bg-blue-light">
+            <i data-lucide="lock" class="icon-lg text-blue"></i>
+          </div>
+          <h2 class="modal-title">Change Password</h2>
+          <p class="modal-subtitle">Update your account security credentials</p>
+        </div>
+        <form class="modal-form" id="change-password-form">
+          <div class="form-group">
+            <label for="currentPassword" class="form-label">Current Password</label>
+            <div class="input-wrapper">
+              <i data-lucide="shield-check" class="input-icon"></i>
+              <input type="password" id="currentPassword" class="form-input" placeholder="********" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="newPassword" class="form-label">New Password</label>
+            <div class="input-wrapper">
+              <i data-lucide="key" class="input-icon"></i>
+              <input type="password" id="newPassword" class="form-input" placeholder="********" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+            <div class="input-wrapper">
+              <i data-lucide="check-circle" class="input-icon"></i>
+              <input type="password" id="confirmPassword" class="form-input" placeholder="********" required>
+            </div>
+          </div>
+          <div class="form-error" id="password-error" style="display: none;"></div>
+          <div class="form-success" id="password-success" style="display: none;"></div>
+          <button type="submit" class="btn btn-primary btn-block">
+            <span>Update Password</span>
+            <i data-lucide="save"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/dashboard.js"></script>
+  <script src="js/hod-dashboard.js"></script>
+</body>
+</html>

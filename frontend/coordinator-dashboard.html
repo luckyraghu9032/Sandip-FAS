@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coordinator Dashboard | FAS Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/student.css">
+  <link rel="icon" type="image/svg+xml" href="public/favicon.svg">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container navbar-container" style="max-width:100%;padding:0 2rem">
+      <div class="navbar-brand">
+        <i data-lucide="book-open" class="icon text-emerald"></i>
+        <div class="brand-text">
+          <span class="brand-title">Sandip University</span>
+          <span class="brand-subtitle">Coordinator Portal</span>
+        </div>
+      </div>
+      <div class="user-profile-nav">
+        <div class="user-name-desktop text-muted" id="user-display-name"></div>
+        <div class="profile-avatar avatar-emerald" id="user-avatar" title="Toggle Menu">
+          <i data-lucide="user" class="icon-sm"></i>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="sidebar-overlay"></div>
+
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-link active" data-tab="overview">
+          <i data-lucide="layout-dashboard" class="icon-sm"></i>
+          Overview
+        </a>
+        <a href="#" class="sidebar-link" data-tab="students">
+          <i data-lucide="graduation-cap" class="icon-sm"></i>
+          Students
+        </a>
+        <a href="#" class="sidebar-link" data-tab="handbook">
+          <i data-lucide="book-open" class="icon-sm"></i>
+          Handbook
+        </a>
+        <a href="#" class="sidebar-link" data-tab="meetings">
+          <i data-lucide="message-square" class="icon-sm"></i>
+          Meeting Reports
+        </a>
+        <a href="#" class="sidebar-link" data-tab="fas">
+          <i data-lucide="download" class="icon-sm"></i>
+          FAS
+        </a>
+        <div class="sidebar-footer-actions">
+          <a href="#" class="sidebar-link" onclick="openModal('change-password-modal')">
+            <i data-lucide="lock" class="icon-sm"></i>
+            Change Password
+          </a>
+          <a href="#" class="sidebar-link logout-link" onclick="logout()">
+            <i data-lucide="log-out" class="icon-sm"></i>
+            Logout
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div class="dashboard-header">
+        <h1 class="dashboard-title" id="tab-title">Overview</h1>
+        <p class="text-muted" id="welcome-msg"></p>
+      </div>
+
+      <!-- ── Overview Tab ── -->
+      <div id="tab-overview">
+        <div class="card" style="background:linear-gradient(135deg,#003366 0%,#004488 100%);border:none;color:#fff;padding:2.5rem 2rem">
+          <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:1.5rem">
+            <div style="width:4rem;height:4rem;border-radius:1.15rem;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <i data-lucide="users" style="width:2rem;height:2rem;color:#fff"></i>
+            </div>
+            <div>
+              <div style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.7);margin-bottom:0.25rem">Sandip University &mdash; FAS Portal</div>
+              <div style="font-size:1.6rem;font-weight:800;line-height:1.2" id="overview-welcome-name">Welcome, Coordinator</div>
+            </div>
+          </div>
+          <p style="color:rgba(255,255,255,0.82);font-size:0.97rem;max-width:42rem;line-height:1.7">You are logged in to the Faculty Advisor System. Use the sidebar to manage your division students, view their handbooks, and respond to meeting reports raised by students.</p>
+        </div>
+
+        <div class="stats-grid" style="margin-top:0">
+          <div class="card stat-card">
+            <div class="stat-topline">
+              <div class="stat-icon bg-blue-light"><i data-lucide="users" class="icon text-blue"></i></div>
+            </div>
+            <div class="stat-caption">Total Students</div>
+            <div class="stat-value" id="overview-student-count">—</div>
+            <div class="stat-help">In your division</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-topline">
+              <div class="stat-icon bg-violet-light"><i data-lucide="book-open" class="icon text-violet"></i></div>
+            </div>
+            <div class="stat-caption">Handbook</div>
+            <div class="stat-value stat-value-text">FAS</div>
+            <div class="stat-help">Mentor-Mentee System</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-topline">
+              <div class="stat-icon bg-emerald-light"><i data-lucide="message-square" class="icon text-emerald"></i></div>
+            </div>
+            <div class="stat-caption">Pending Actions</div>
+            <div class="stat-value" id="overview-pending-count">—</div>
+            <div class="stat-help">Meeting responses needed</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:0">
+          <div class="panel-header" style="margin-bottom:1rem">
+            <div>
+              <p class="panel-eyebrow">Quick Access</p>
+              <h2 class="panel-title">What would you like to do?</h2>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
+            <button class="portal-card card-glow" onclick="switchTab('students')" style="border:none;cursor:pointer;text-align:left">
+              <div class="portal-icon-wrapper bg-blue-light"><i data-lucide="graduation-cap" class="icon-lg text-blue"></i></div>
+              <div class="portal-title">Students</div>
+              <div class="portal-desc">Upload and manage your division students</div>
+            </button>
+            <button class="portal-card card-glow" onclick="switchTab('handbook')" style="border:none;cursor:pointer;text-align:left">
+              <div class="portal-icon-wrapper bg-violet-light"><i data-lucide="book-open" class="icon-lg text-violet"></i></div>
+              <div class="portal-title">Handbook</div>
+              <div class="portal-desc">View student mentor-mentee handbooks</div>
+            </button>
+            <button class="portal-card card-glow" onclick="switchTab('meetings')" style="border:none;cursor:pointer;text-align:left">
+              <div class="portal-icon-wrapper bg-emerald-light"><i data-lucide="message-square" class="icon-lg text-emerald"></i></div>
+              <div class="portal-title">Meeting Reports</div>
+              <div class="portal-desc">Review and respond to student problems</div>
+            </button>
+            <button class="portal-card card-glow" onclick="switchTab('fas')" style="border:none;cursor:pointer;text-align:left">
+              <div class="portal-icon-wrapper bg-violet-light"><i data-lucide="download" class="icon-lg text-violet"></i></div>
+              <div class="portal-title">FAS</div>
+              <div class="portal-desc">Download a student FAS handbook by PRN</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Students Tab ── -->
+      <div id="tab-students">
+        <div class="card">
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">Student Management</p>
+              <h2 class="panel-title">Upload Division Students</h2>
+            </div>
+          </div>
+          <p class="text-muted mb-4">Upload an Excel file (.xlsx) with your division students.</p>
+          <div class="form-group">
+            <label for="students-file" class="form-label">Select Excel File</label>
+            <div class="input-wrapper">
+              <i data-lucide="file-spreadsheet" class="input-icon"></i>
+              <input type="file" id="students-file" accept=".xlsx,.xls" class="form-input">
+            </div>
+          </div>
+          <div class="form-error" id="upload-error" style="display:none"></div>
+          <div class="form-success" id="upload-success" style="display:none"></div>
+          <button type="button" class="btn btn-primary" id="upload-students-btn">
+            <i data-lucide="upload"></i> Upload Students
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">Division Students</p>
+              <h2 class="panel-title">Your Students</h2>
+            </div>
+            <span class="panel-chip panel-chip-neutral" id="students-count">0 students</span>
+          </div>
+          <div class="table-shell">
+            <table class="allocation-table">
+              <thead>
+                <tr>
+                  <th>Student Name</th>
+                  <th>Email Address</th>
+                  <th>PRN Number</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="students-list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Handbook Tab ── -->
+      <div id="tab-handbook" style="display:none">
+        <div class="card">
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">Student Handbook</p>
+              <h2 class="panel-title">Mentor-Mentee Handbook Viewer</h2>
+            </div>
+          </div>
+          <div class="form-group" style="max-width:24rem">
+            <label class="form-label">Select Student</label>
+            <div class="input-wrapper">
+              <i data-lucide="user" class="input-icon"></i>
+              <select id="handbook-student-select" class="form-input form-select" onchange="loadCoordHandbook(this.value)">
+                <option value="">-- Select a student --</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section nav -->
+        <div id="handbook-section-nav" style="display:none;flex-wrap:wrap;gap:0.5rem;margin:0.5rem 0">
+          <a href="#" class="ch-nav-link sidebar-link" data-section="handbook" style="padding:0.5rem 0.9rem;border-radius:0.75rem">Cover</a>
+          <a href="#" class="ch-nav-link sidebar-link" data-section="index" style="padding:0.5rem 0.9rem;border-radius:0.75rem">Index</a>
+          <a href="#" class="ch-nav-link sidebar-link" data-section="profile" style="padding:0.5rem 0.9rem;border-radius:0.75rem">Student Details</a>
+          <a href="#" class="ch-nav-link sidebar-link" data-section="academic" style="padding:0.5rem 0.9rem;border-radius:0.75rem">Academic Progress</a>
+          <a href="#" class="ch-nav-link sidebar-link" data-section="mentor-info" style="padding:0.5rem 0.9rem;border-radius:0.75rem">Mentor Info</a>
+          <a href="#" class="ch-nav-link sidebar-link" data-section="meeting" style="padding:0.5rem 0.9rem;border-radius:0.75rem">Meeting Report</a>
+          <a href="#" class="ch-nav-link sidebar-link" data-section="vision" style="padding:0.5rem 0.9rem;border-radius:0.75rem">Vision-Mission</a>
+        </div>
+
+        <!-- Section content -->
+        <div id="handbook-content-area">
+          <div id="ch-section-handbook" style="display:none"></div>
+          <div id="ch-section-index"    style="display:none"></div>
+          <div id="ch-section-profile"  style="display:none"></div>
+          <div id="ch-section-academic" style="display:none"></div>
+          <div id="ch-section-mentor-info" style="display:none"></div>
+          <div id="ch-section-meeting" style="display:none"></div>
+          <div id="ch-section-vision"  style="display:none"></div>
+        </div>
+      </div>
+
+      <!-- ── FAS Download Tab ── -->
+      <div id="tab-fas" style="display:none">
+        <div class="card" style="background:linear-gradient(135deg,rgba(124,58,237,0.06),rgba(37,99,235,0.04));border:2px solid rgba(124,58,237,0.18)">
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">FAS Download</p>
+              <h2 class="panel-title">Download Student FAS Handbook</h2>
+            </div>
+          </div>
+          <p class="text-muted mb-4">Enter a student's PRN number from your division to generate and download their complete FAS handbook PDF.</p>
+          <div class="form-group" style="max-width:24rem">
+            <label for="fas-prn-input" class="form-label">Student PRN Number</label>
+            <div class="input-wrapper">
+              <i data-lucide="hash" class="input-icon"></i>
+              <input type="text" id="fas-prn-input" class="form-input" placeholder="e.g. 2101010101" autocomplete="off">
+            </div>
+          </div>
+          <div id="fas-student-preview"></div>
+          <div class="form-error" id="fas-download-error" style="display:none"></div>
+          <div class="form-success" id="fas-download-success" style="display:none"></div>
+          <div id="fas-pdf-msg" style="margin-bottom:0.75rem"></div>
+          <button type="button" class="btn btn-primary" id="fas-download-btn" onclick="downloadCoordFasByPrn()" style="background:linear-gradient(135deg,#7c3aed,#2563eb);border:none;padding:0.85rem 2rem">
+            <span>📥 Download FAS PDF</span>
+          </button>
+          <div style="margin-top:1rem;padding:0.85rem 1rem;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:0.75rem;font-size:0.82rem;color:#92400e">
+            Only students assigned to your division can be downloaded. Empty profile fields will appear as dotted lines in the PDF.
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Meeting Reports Tab ── -->
+      <div id="tab-meetings" style="display:none">
+        <div class="card">
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">Student Raised Problems</p>
+              <h2 class="panel-title">Meeting Reports</h2>
+            </div>
+            <span class="panel-chip panel-chip-neutral" id="meeting-pending-count"></span>
+          </div>
+          <p class="text-muted mb-4">Students who have raised problems are listed below. Select a student to review and fill your action &amp; signature.</p>
+
+          <!-- Student selector -->
+          <div class="form-group" style="max-width:24rem">
+            <label class="form-label">Select Student</label>
+            <div class="input-wrapper">
+              <i data-lucide="user" class="input-icon"></i>
+              <select id="meeting-student-select" class="form-input form-select">
+                <option value="">-- Select a student --</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Meeting table area -->
+          <div id="meeting-report-area"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div class="modal-backdrop" id="change-password-modal" style="display:none">
+    <div class="modal-container">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('change-password-modal')">
+          <i data-lucide="x"></i>
+        </button>
+        <div class="modal-header">
+          <div class="modal-icon-wrapper bg-emerald-light">
+            <i data-lucide="lock" class="icon-lg text-emerald"></i>
+          </div>
+          <h2 class="modal-title">Change Password</h2>
+          <p class="modal-subtitle">Update your account security credentials</p>
+        </div>
+        <form class="modal-form" id="change-password-form">
+          <div class="form-group">
+            <label for="currentPassword" class="form-label">Current Password</label>
+            <div class="input-wrapper">
+              <i data-lucide="shield-check" class="input-icon"></i>
+              <input type="password" id="currentPassword" name="currentPassword" class="form-input" placeholder="••••••••" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="newPassword" class="form-label">New Password</label>
+            <div class="input-wrapper">
+              <i data-lucide="key" class="input-icon"></i>
+              <input type="password" id="newPassword" name="newPassword" class="form-input" placeholder="••••••••" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+            <div class="input-wrapper">
+              <i data-lucide="check-circle" class="input-icon"></i>
+              <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" placeholder="••••••••" required>
+            </div>
+          </div>
+          <div class="form-error" id="password-error" style="display:none"></div>
+          <div class="form-success" id="password-success" style="display:none"></div>
+          <button type="submit" class="btn btn-primary btn-block">
+            <span>Update Password</span>
+            <i data-lucide="save"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/coord-handbook.js"></script>
+  <script src="js/fas-pdf.js"></script>
+  <script src="js/coord-fas-download.js"></script>
+  <script>
+    const user = checkAuth('coordinator');
+    if (user) {
+      document.getElementById('welcome-msg').textContent = `Welcome, ${user.name}`;
+      document.getElementById('user-display-name').textContent = user.name;
+      document.getElementById('overview-welcome-name').textContent = `Welcome, ${user.name}`;
+      lucide.createIcons();
+      // Hide all tabs except overview on load
+      ['students','handbook','meetings','fas'].forEach(t => { document.getElementById(`tab-${t}`).style.display = 'none'; });
+      initCoordinatorDashboard();
+    }
+
+    // ── Tab switching ─────────────────────────────────────────────────────────
+    const TAB_TITLES = { overview: 'Overview', students: 'Students', handbook: 'Handbook', meetings: 'Meeting Reports', fas: 'FAS Download' };
+    const ALL_TABS = ['overview','students','handbook','meetings','fas'];
+
+    function switchTab(tab) {
+      document.querySelectorAll('.sidebar-link[data-tab]').forEach(l => l.classList.toggle('active', l.dataset.tab === tab));
+      ALL_TABS.forEach(t => { const el = document.getElementById(`tab-${t}`); if (el) el.style.display = t === tab ? '' : 'none'; });
+      document.getElementById('tab-title').textContent = TAB_TITLES[tab] || tab;
+      if (window.innerWidth <= 768) toggleSidebar(false);
+    }
+
+    document.querySelectorAll('.sidebar-link[data-tab]').forEach(link => {
+      link.addEventListener('click', e => { e.preventDefault(); switchTab(link.dataset.tab); });
+    });
+
+    // Handbook section nav
+    document.addEventListener('click', e => {
+      const link = e.target.closest('.ch-nav-link');
+      if (link && link.dataset.section) {
+        e.preventDefault();
+        showHandbookSection(link.dataset.section);
+      }
+    });
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+    let allStudents = [];
+
+    async function initCoordinatorDashboard() {
+      // Upload students
+      const uploadBtn   = document.getElementById('upload-students-btn');
+      const fileInput   = document.getElementById('students-file');
+      const uploadError = document.getElementById('upload-error');
+      const uploadSuccess = document.getElementById('upload-success');
+
+      uploadBtn.addEventListener('click', async () => {
+        uploadError.style.display = 'none';
+        uploadSuccess.style.display = 'none';
+        const file = fileInput.files[0];
+        if (!file) { uploadError.textContent = 'Please select a file'; uploadError.style.display = 'block'; return; }
+        if (!file.name.match(/\.(xlsx|xls)$/)) { uploadError.textContent = 'Please select an Excel file'; uploadError.style.display = 'block'; return; }
+        try {
+          uploadBtn.disabled = true;
+          uploadBtn.innerHTML = '<span>Uploading...</span>';
+          const formData = new FormData();
+          formData.append('file', file);
+          const response = await fetch(`${API_BASE}/api/coordinator/upload-students`, {
+            method: 'POST',
+            headers: { 'x-auth-token': localStorage.getItem('token') },
+            body: formData,
+          });
+          if (response.status === 401) { window.location.href = '/'; return; }
+          const data = await response.json();
+          if (!response.ok) { uploadError.textContent = data.error || 'Failed to upload file'; uploadError.style.display = 'block'; return; }
+          uploadSuccess.textContent = `Success! ${data.count} student(s) added.`;
+          uploadSuccess.style.display = 'block';
+          fileInput.value = '';
+          await loadStudents();
+        } catch (error) {
+          uploadError.textContent = error.message || 'Failed to process file';
+          uploadError.style.display = 'block';
+        } finally {
+          uploadBtn.disabled = false;
+          uploadBtn.innerHTML = '<i data-lucide="upload"></i> Upload Students';
+          lucide.createIcons();
+        }
+      });
+
+      await loadStudents();
+
+      // Meeting student selector
+      document.getElementById('meeting-student-select').addEventListener('change', async function() {
+        const id = this.value;
+        if (!id) { document.getElementById('meeting-report-area').innerHTML = ''; return; }
+        await loadStudentMeeting(id);
+      });
+    }
+
+    // ── Students ──────────────────────────────────────────────────────────────
+    async function loadStudents() {
+      try {
+        const response = await fetch(`${API_BASE}/api/coordinator/students`, {
+          headers: { 'x-auth-token': localStorage.getItem('token') },
+        });
+        if (response.status === 401) { window.location.href = '/'; return; }
+        allStudents = await response.json();
+        renderStudents(allStudents);
+        populateMeetingSelector(allStudents);
+        populateHandbookSelector(allStudents);
+        // Update overview stats
+        const pending = allStudents.reduce((n, s) => {
+          // count pending if student has discussion without action (rough check via id only — actual check in meeting view)
+          return n;
+        }, 0);
+        const countEl = document.getElementById('overview-student-count');
+        if (countEl) countEl.textContent = allStudents.length;
+        const pendingEl = document.getElementById('overview-pending-count');
+        if (pendingEl) pendingEl.textContent = '—';
+      } catch (error) {
+        console.error('Failed to load students:', error);
+      }
+    }
+
+    function renderStudents(students) {
+      const tbody = document.getElementById('students-list');
+      document.getElementById('students-count').textContent = `${students.length} student${students.length !== 1 ? 's' : ''}`;
+      if (!students.length) {
+        tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state empty-state-inline"><strong>No students yet.</strong><span>Upload an Excel file to add students.</span></div></td></tr>`;
+        return;
+      }
+      tbody.innerHTML = students.map(s => `
+        <tr id="student-row-${s.id}">
+          <td><div class="table-person"><strong>${escapeHtml(s.name)}</strong></div></td>
+          <td>${escapeHtml(s.email)}</td>
+          <td>${escapeHtml(s.prn_number || 'Not supplied')}</td>
+          <td><button class="table-action-btn" data-id="${s.id}" data-name="${escapeHtml(s.name)}" title="Delete">🗑</button></td>
+        </tr>`).join('');
+    }
+
+    document.getElementById('students-list').addEventListener('click', e => {
+      const btn = e.target.closest('button[data-id]');
+      if (btn) window.deleteStudent(btn.dataset.id, btn.dataset.name);
+    });
+
+    window.deleteStudent = async function(id, name) {
+      if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/coordinator/students/${id}`, {
+          method: 'DELETE',
+          headers: { 'x-auth-token': localStorage.getItem('token') },
+        });
+        if (res.status === 401) { window.location.href = '/'; return; }
+        const data = await res.json();
+        if (!res.ok) { alert(data.error || 'Failed to delete student.'); return; }
+        document.getElementById(`student-row-${id}`)?.remove();
+        const remaining = document.getElementById('students-list').querySelectorAll('tr').length;
+        document.getElementById('students-count').textContent = `${remaining} student${remaining !== 1 ? 's' : ''}`;
+        allStudents = allStudents.filter(s => String(s.id) !== String(id));
+        populateMeetingSelector(allStudents);
+      } catch (err) { alert('Network error. Please try again.'); }
+    };
+
+    function populateHandbookSelector(students) {
+      const sel = document.getElementById('handbook-student-select');
+      if (!sel) return;
+      sel.innerHTML = '<option value="">-- Select a student --</option>' +
+        students.map(s => `<option value="${s.id}">${escapeHtml(s.name)} (${escapeHtml(s.prn_number || s.email)})</option>`).join('');
+    }
+
+    // ── Meeting Reports ───────────────────────────────────────────────────────
+    function populateMeetingSelector(students) {
+      const sel = document.getElementById('meeting-student-select');
+      sel.innerHTML = '<option value="">-- Select a student --</option>' +
+        students.map(s => `<option value="${s.id}">${escapeHtml(s.name)} (${escapeHtml(s.prn_number || s.email)})</option>`).join('');
+    }
+
+    async function loadStudentMeeting(studentId) {
+      const area = document.getElementById('meeting-report-area');
+      area.innerHTML = '<p class="text-muted" style="margin-top:1rem">Loading...</p>';
+      try {
+        const res = await fetch(`${API_BASE}/api/coordinator/students/${studentId}/profile`, {
+          headers: { 'x-auth-token': localStorage.getItem('token') },
+        });
+        if (res.status === 401) { window.location.href = '/'; return; }
+        const student = await res.json();
+        renderMeetingTable(student);
+      } catch (err) {
+        area.innerHTML = `<div class="form-error" style="margin-top:1rem">${err.message || 'Failed to load.'}</div>`;
+      }
+    }
+
+    function renderMeetingTable(student, editMode = false) {
+      const pd = student.profileData || {};
+      const g = k => (pd[k] && String(pd[k]).trim()) ? String(pd[k]).trim() : '';
+
+      const rowCount = 6;
+      const rows = Array.from({ length: rowCount }, (_, i) => ({
+        no:     `Meeting_No_${i+1}`,
+        date:   `Meeting_Date_${i+1}`,
+        disc:   `Meeting_Discussion_${i+1}`,
+        ssign:  `Meeting_StudentSign_${i+1}`,
+        action: `Meeting_Action_${i+1}`,
+        msign:  `Meeting_MentorSign_${i+1}`,
+      }));
+
+      // Check if any meeting has a discussion raised by student
+      const hasAny = rows.some(r => g(r.disc) || g(r.no));
+      document.getElementById('meeting-pending-count').textContent =
+        rows.filter(r => g(r.disc) && !g(r.action)).length + ' pending';
+
+      // Student columns — read only for coordinator
+      const sCell = k => g(k)
+        ? `<span style="color:var(--uni-blue-dark);font-weight:500">${escapeHtml(g(k))}</span>`
+        : `<span style="color:var(--text-muted);font-size:0.82rem">—</span>`;
+
+      // Coordinator editable cells
+      const cCell = (k, placeholder) => editMode
+        ? `<input name="${k}" value="${escapeHtml(g(k))}" class="edit-input" placeholder="${placeholder}" style="min-width:7rem">`
+        : (g(k)
+            ? `<span style="color:var(--emerald-600);font-weight:600">${escapeHtml(g(k))}</span>`
+            : `<span style="color:#f59e0b;font-size:0.82rem;font-weight:600">Pending</span>`);
+
+      const hodSign  = g('Meeting_HOD_Sign');
+      const deanSign = g('Meeting_Dean_Sign');
+
+      const officialUseFields = [
+        {label:'Admitted in Class: FE',    k:'OfficialUse_FE_Year'},
+        {label:'Admitted in Class: SE/DSE',k:'OfficialUse_SE_Year'},
+        {label:'Admitted in Class: TE',    k:'OfficialUse_TE_Year'},
+        {label:'Admitted in Class: BE',    k:'OfficialUse_BE_Year'},
+      ];
+
+      const officialUseHTML = officialUseFields.map(c => {
+        const val = g(c.k);
+        const valueHtml = editMode
+          ? '<div style="display:flex;align-items:center;gap:0.5rem"><span style="color:var(--text-muted);font-size:0.88rem">Academic Year:</span><input name="' + c.k + '" value="' + escapeHtml(val) + '" class="edit-input" placeholder="e.g. 2023-24" style="max-width:10rem"></div>'
+          : '<span class="fas-field-value ' + (val ? '' : 'fas-field-empty') + '">Academic Year: ' + (val || '................................') + '</span>';
+        return '<div class="fas-field"><span class="fas-field-label">' + c.label + '</span>' + valueHtml + '</div>';
+      }).join('');
+
+      const editBtn = `<button class="btn btn-dark" onclick="toggleCoordMeetingEdit(${student.id})"><span>✏️ Fill Actions</span></button>`;
+      const saveBtn = `<button class="btn btn-primary" onclick="saveCoordMeeting(${student.id})"><span>Save</span></button>
+                       <button class="btn btn-dark" onclick="loadStudentMeeting(${student.id})" style="margin-left:0.5rem"><span>Cancel</span></button>`;
+
+      const area = document.getElementById('meeting-report-area');
+      area.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;margin:1rem 0 0.75rem;flex-wrap:wrap;gap:0.5rem">
+          <div style="font-weight:700;color:var(--uni-blue-dark)">${escapeHtml(student.name)} &nbsp;<span class="text-muted" style="font-weight:400;font-size:0.88rem">PRN: ${escapeHtml(student.prnNumber||'')}</span></div>
+          <div>${editMode ? saveBtn : editBtn}</div>
+        </div>
+        <div id="coord-meeting-save-msg"></div>
+        ${!hasAny ? `<div class="empty-state" style="margin-top:0.5rem"><strong>No meetings raised yet.</strong><span>This student has not submitted any meeting entries.</span></div>` : ''}
+        <form id="coord-meeting-form" onsubmit="return false" data-student-id="${student.id}">
+          <div class="table-shell" style="margin-top:0.5rem">
+            <table class="allocation-table">
+              <thead>
+                <tr>
+                  <th>Meeting No.</th>
+                  <th>Meeting Date</th>
+                  <th>Discussions / Suggestions / Problems</th>
+                  <th>Student Sign</th>
+                  <th>Action Taken by Mentor</th>
+                  <th>Sign of Mentor</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows.map(r => `<tr>
+                  <td>${sCell(r.no)}</td>
+                  <td>${sCell(r.date)}</td>
+                  <td>${sCell(r.disc)}</td>
+                  <td>${sCell(r.ssign)}</td>
+                  <td>${cCell(r.action, 'Action taken')}</td>
+                  <td>${cCell(r.msign,  'Mentor sign')}</td>
+                </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
+            <div class="fas-field">
+              <span class="fas-field-label">Name &amp; Sign of Head of Department</span>
+              ${editMode
+                ? `<input name="Meeting_HOD_Sign" value="${escapeHtml(hodSign)}" class="edit-input" placeholder="Name / Signature">`
+                : `<span class="fas-field-value ${hodSign ? '' : 'fas-field-empty'}">${hodSign || '................................'}</span>`}
+            </div>
+            <div class="fas-field">
+              <span class="fas-field-label">Name &amp; Sign of Dean</span>
+              ${editMode
+                ? `<input name="Meeting_Dean_Sign" value="${escapeHtml(deanSign)}" class="edit-input" placeholder="Name / Signature">`
+                : `<span class="fas-field-value ${deanSign ? '' : 'fas-field-empty'}">${deanSign || '................................'}</span>`}
+            </div>
+          </div>
+          <div style="margin-top:1.25rem;padding:1.25rem;border:2px solid rgba(37,99,235,0.18);border-radius:1rem;background:rgba(239,246,255,0.6)">
+            <div style="font-weight:700;color:var(--blue-600);font-size:0.95rem;margin-bottom:1rem">For Official Use &nbsp;<span style="font-weight:400;font-size:0.78rem;color:var(--text-muted)">(To be Filled by Mentor)</span></div>
+            <div class="field-grid">${officialUseHTML}</div>
+          </div>
+        </form>`;
+
+      // Add edit-input CSS if not already present
+      if (!document.getElementById('coord-edit-style')) {
+        const style = document.createElement('style');
+        style.id = 'coord-edit-style';
+        style.textContent = `.edit-input{width:100%;min-height:2.4rem;padding:.45rem .75rem;border:1px solid var(--border-color);border-radius:.65rem;background:#f8fafc;color:var(--text-main);font-size:.9rem;transition:border-color .2s,box-shadow .2s}.edit-input:focus{outline:none;border-color:rgba(5,150,105,.45);background:#fff;box-shadow:0 0 0 3px rgba(5,150,105,.1)}.fas-field-empty{color:var(--text-muted);font-weight:400}.fas-field-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);display:block;margin-bottom:.2rem}.fas-field-value{font-size:.95rem;font-weight:600;color:var(--uni-blue-dark)}`;
+        document.head.appendChild(style);
+      }
+    }
+
+    // Store current student data for edit toggle
+    let currentMeetingStudent = null;
+
+    window.toggleCoordMeetingEdit = async function(studentId) {
+      const res = await fetch(`${API_BASE}/api/coordinator/students/${studentId}/profile`, {
+        headers: { 'x-auth-token': localStorage.getItem('token') },
+      });
+      currentMeetingStudent = await res.json();
+      renderMeetingTable(currentMeetingStudent, true);
+    };
+
+    window.saveCoordMeeting = async function(studentId) {
+      const form = document.getElementById('coord-meeting-form');
+      if (!form) return;
+      const profileData = {};
+      form.querySelectorAll('input[name]').forEach(inp => {
+        if (inp.name) profileData[inp.name] = inp.value.trim();
+      });
+      const msgEl = document.getElementById('coord-meeting-save-msg');
+      msgEl.innerHTML = '<p class="text-muted" style="margin-bottom:.5rem">Saving…</p>';
+      try {
+        const res = await fetch(`${API_BASE}/api/coordinator/students/${studentId}/meeting`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'x-auth-token': localStorage.getItem('token') },
+          body: JSON.stringify({ profileData }),
+        });
+        const data = await res.json();
+        if (!res.ok) { msgEl.innerHTML = `<div class="form-error" style="margin-bottom:.5rem">${data.error || 'Failed to save.'}</div>`; return; }
+        await loadStudentMeeting(studentId);
+        const msg = document.createElement('div');
+        msg.className = 'form-success';
+        msg.style.marginBottom = '0.75rem';
+        msg.textContent = 'Meeting report saved successfully!';
+        document.getElementById('meeting-report-area').prepend(msg);
+        setTimeout(() => msg.remove(), 3000);
+      } catch (err) {
+        msgEl.innerHTML = `<div class="form-error" style="margin-bottom:.5rem">${err.message || 'Failed to save.'}</div>`;
+      }
+    };
+
+    function escapeHtml(value) {
+      return String(value || '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#39;");
+    }
+  </script>
+</body>
+</html>

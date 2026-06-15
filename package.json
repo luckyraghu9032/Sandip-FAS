@@ -1,0 +1,11 @@
+{
+  "name": "fas",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npm start --prefix backend",
+    "dev": "npm run dev --prefix backend",
+    "install-all": "npm install && npm install --prefix backend",
+    "init-db": "npm run init-db --prefix backend"
+  }
+}

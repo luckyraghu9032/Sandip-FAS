@@ -1,0 +1,220 @@
+/* ── Student Handbook Styles ───────────────────────────────────────────── */
+
+.section-page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--uni-blue-dark);
+  letter-spacing: -0.02em;
+  margin-bottom: 1.25rem;
+}
+
+/* Handbook Cover Page */
+.handbook-title-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 60vh;
+  gap: 1rem;
+  background: rgba(255,255,255,0.88);
+  border: 1px solid rgba(226,232,240,0.9);
+  border-radius: 1.35rem;
+  padding: 3rem 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.handbook-logo-row {
+  margin-bottom: 0.5rem;
+}
+
+.handbook-main-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  color: var(--uni-blue-dark);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.handbook-sub-title {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-top: -0.25rem;
+}
+
+.handbook-meta {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* Generic Handbook Card */
+.handbook-card {
+  background: rgba(255,255,255,0.88);
+  border: 1px solid rgba(226,232,240,0.9);
+  border-radius: 1.35rem;
+  padding: 1.75rem 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.handbook-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--uni-blue-dark);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(226,232,240,0.85);
+}
+
+/* Field Grid */
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem 1.5rem;
+}
+
+.fas-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+}
+
+.fas-field-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+
+.fas-field-value {
+  font-size: 0.97rem;
+  font-weight: 600;
+  color: var(--uni-blue-dark);
+  word-break: break-word;
+}
+
+/* Index Table */
+.index-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.index-table th,
+.index-table td {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(226,232,240,0.8);
+  font-size: 0.95rem;
+}
+
+.index-table th {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(15,23,42,0.04);
+}
+
+.index-table td:first-child {
+  width: 80px;
+  font-weight: 700;
+  color: var(--blue-600);
+}
+
+.index-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.fas-field-value.fas-field-empty {
+  color: var(--text-muted);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  font-size: 0.9rem;
+}
+
+.handbook-divider {
+  width: 4rem;
+  height: 2px;
+  background: linear-gradient(90deg, var(--uni-gold), var(--blue-600));
+  border-radius: 999px;
+  margin: 0.5rem auto;
+}
+
+.handbook-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  background: rgba(124,58,237,0.1);
+  color: var(--violet-600);
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+/* Edit mode inputs */
+.edit-input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  background: #f8fafc;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: rgba(124,58,237,0.45);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(124,58,237,0.1);
+}
+
+.edit-input-readonly {
+  background: rgba(15,23,42,0.04);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+/* Vision-Mission list */
+.vision-mission-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.vm-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  line-height: 1.7;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.vm-code {
+  flex-shrink: 0;
+  min-width: 2.8rem;
+  font-weight: 700;
+  color: var(--uni-blue-dark);
+  padding-top: 0.05rem;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .field-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .handbook-card {
+    padding: 1.25rem;
+  }
+}
