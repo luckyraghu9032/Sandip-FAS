@@ -414,11 +414,11 @@ router.post('/upload-students', auth, upload.single('file'), async (req, res) =>
     let createdCount = 0;
     let updatedCount = 0;
 
-    for (const row of rows) {
+for (const row of rows) {
       // Handle flexible column name variations - prioritize exact column names from the data
       const name = normalizeText(
         row.student_name || row['Student Name'] || row.name || row.Name || 
-        row['Full Name'] || row['full_name'] || row.StudentName
+        row['Full Name'] || row['full_name'] || row.StudentName || row.prn || row.PRN
       );
       const email = normalizeEmail(
         row.email || row.Email || row['Student Email'] || row['student_email'] || 
@@ -436,22 +436,111 @@ router.post('/upload-students', auth, upload.single('file'), async (req, res) =>
 
       const hashedPassword = await bcrypt.hash(prnNumber || 'student', 10);
       
-      // Build comprehensive profile data from all available fields
+      // Build comprehensive profile data from all available fields with exact column name mapping
       const additionalProfileData = {
-        SchoolName: row.SchoolName,
-        DepartmentName: row.DepartmentName,
-        Programme: row.Programme,
-        Yearofadmission: row.Yearofadmission,
-        dob: row.dob,
-        mobile_number: row.mobile_number,
-        PostalAddress: row.PostalAddress,
-        PermanentAddress: row.PermanentAddress,
-        PermanentPincode: row.PermanentPincode,
-        PresentAddress: row.PresentAddress,
-        PresentPincode: row.PresentPincode,
+        // Basic info
+        SchoolName: row.SchoolName || row.schoolName || row['School Name'],
+        DepartmentName: row.DepartmentName || row.departmentName || row['Department Name'],
+        HostelerDayScholar: row.HostelerDayScholar || row.hosteler || row['Hosteler Day Scholar'],
+        Programme: row.Programme || row.programme || row['Program'],
+        Yearofadmission: row.Yearofadmission || row.yearofadmission || row['Year of Admission'],
+        
+        // Contact info
+        dob: row.dob || row.DOB || row['Date of Birth'] || row.dateofbirth,
+        mobile_number: row.mobile_number || row.MobileNumber || row['Mobile Number'] || row.phone,
+        PostalAddress: row.PostalAddress || row.postaladdress || row['Postal Address'],
+        
+        // Address details
+        PermanentAddress: row.PermanentAddress || row.permanentaddress || row['Permanent Address'],
+        PermanentPincode: row.PermanentPincode || row.permanentpincode || row['Permanent Pincode'],
+        PresentAddress: row.PresentAddress || row.presentaddress || row['Present Address'],
+        PresentPincode: row.PresentPincode || row.presentpincode || row['Present Pincode'],
+        
+        // Parent mobile numbers - handle both naming conventions
+        FatherMobile1: row.FatherMobileNumber1 || row.FatherMobile1 || row.fathermobile1 || row['Father Mobile Number 1'] || row['Father Mobile 1'],
+        FatherMobile2: row.FatherMobileNumber2 || row.FatherMobile2 || row.fathermobile2 || row['Father Mobile Number 2'] || row['Father Mobile 2'],
+        MotherMobile1: row.MotherMobileNumber1 || row.MotherMobile1 || row.mothermobile1 || row['Mother Mobile Number 1'] || row['Mother Mobile 1'],
+        MotherMobile2: row.MotherMobileNumber2 || row.MotherMobile2 || row.mothermobile2 || row['Mother Mobile Number 2'] || row['Mother Mobile 2'],
+        
+        // Guardian details
+        LocalGuardianName: row.GuardianName || row['Guardian Name'] || row['Local Guardian Name'],
+        LocalGuardianAddress: row.GuardianAddress || row['Guardian Address'] || row['Local Guardian Address'],
+        LocalGuardianMobile: row.GuardianMobile || row['Guardian Mobile'] || row['Local Guardian Mobile'],
+        
+        // Education - SSC
+        SSC_Board: row.SSCBoard || row.SSC_Board || row['SSC Board'],
+        SSC_Year: row.SSCYear || row.SSC_Year || row['SSC Year'],
+        SSC_Grade: row.SSCPercentage || row.SSC_Grade || row['SSC Percentage'] || row.SSCGrade,
+        
+        // Education - HSC
+        HSSC_Board: row.HSCBoard || row.HSSC_Board || row['HSC Board'] || row.HSCBoard,
+        HSSC_Year: row.HSCYear || row.HSSC_Year || row['HSC Year'],
+        HSSC_Grade: row.HSCPercentage || row.HSSC_Grade || row['HSC Percentage'] || row.HSCGrade,
+        
+        // Education - Diploma
+        Diploma_Board: row.DiplomaCollege || row.Diploma_Board || row['Diploma College'],
+        Diploma_Year: row.DiplomaYear || row.Diploma_Year || row['Diploma Year'],
+        Diploma_Grade: row.DiplomaPercentage || row.Diploma_Grade || row['Diploma Percentage'],
+        
+        // Family details - Father
         FatherName: row.FatherName,
+        Family_Father_Name: row.FatherName || row.Family_Father_Name || row['Father Name'],
+        Family_Father_Age: row.FatherAge || row.Family_Father_Age || row['Father Age'],
+        Family_Father_Qual: row.FatherQualificationOccupation || row.Family_Father_Qual || row['Father Qualification Occupation'],
+        
+        // Family details - Mother
         MotherName: row.MotherName,
-        HostelerDayScholar: row.HostelerDayScholar,
+        Family_Mother_Name: row.MotherName || row.Family_Mother_Name || row['Mother Name'],
+        Family_Mother_Age: row.MotherAge || row.Family_Mother_Age || row['Mother Age'],
+        Family_Mother_Qual: row.MotherQualificationOccupation || row.Family_Mother_Qual || row['Mother Qualification Occupation'],
+        
+        // Family details - Sibling 1
+        Family_Sib1_Name: row.Sibling1Name || row.Family_Sib1_Name || row['Sibling 1 Name'],
+        Family_Sib1_Age: row.Sibling1Age || row.Family_Sib1_Age || row['Sibling 1 Age'],
+        Family_Sib1_Qual: row.Sibling1QualificationOccupation || row.Family_Sib1_Qual || row['Sibling 1 Qualification Occupation'],
+        
+        // Family details - Sibling 2
+        Family_Sib2_Name: row.Sibling2Name || row.Family_Sib2_Name || row['Sibling 2 Name'],
+        Family_Sib2_Age: row.Sibling2Age || row.Family_Sib2_Age || row['Sibling 2 Age'],
+        Family_Sib2_Qual: row.Sibling2QualificationOccupation || row.Family_Sib2_Qual || row['Sibling 2 Qualification Occupation'],
+        
+        // Hobbies and activities
+        Hobbies: row.HobbiesInterest || row.Hobbies || row['Hobbies Interest'] || row.hobbiesinterest,
+        CoCurricularActivities: row.CoCurricularActivities || row['Co-Curricular Activities'],
+        Achievements: row.Achievements,
+        
+        // Semester results
+        CGPA_Sem1: row.Sem1CGPA || row['Sem 1 CGPA'],
+        Grade_Sem1: row.Sem1Grade || row['Sem 1 Grade'],
+        Remarks_Sem1: row.Sem1Remarks || row['Sem 1 Remarks'],
+        CGPA_Sem2: row.Sem2CGPA || row['Sem 2 CGPA'],
+        Grade_Sem2: row.Sem2Grade || row['Sem 2 Grade'],
+        Remarks_Sem2: row.Sem2Remarks || row['Sem 2 Remarks'],
+        CGPA_Sem3: row.Sem3CGPA || row['Sem 3 CGPA'],
+        Grade_Sem3: row.Sem3Grade || row['Sem 3 Grade'],
+        Remarks_Sem3: row.Sem3Remarks || row['Sem 3 Remarks'],
+        CGPA_Sem4: row.Sem4CGPA || row['Sem 4 CGPA'],
+        Grade_Sem4: row.Sem4Grade || row['Sem 4 Grade'],
+        Remarks_Sem4: row.Sem4Remarks || row['Sem 4 Remarks'],
+        CGPA_Sem5: row.Sem5CGPA || row['Sem 5 CGPA'],
+        Grade_Sem5: row.Sem5Grade || row['Sem 5 Grade'],
+        Remarks_Sem5: row.Sem5Remarks || row['Sem 5 Remarks'],
+        CGPA_Sem6: row.Sem6CGPA || row['Sem 6 CGPA'],
+        Grade_Sem6: row.Sem6Grade || row['Sem 6 Grade'],
+        Remarks_Sem6: row.Sem6Remarks || row['Sem 6 Remarks'],
+        CGPA_Sem7: row.Sem7CGPA || row['Sem 7 CGPA'],
+        Grade_Sem7: row.Sem7Grade || row['Sem 7 Grade'],
+        Remarks_Sem7: row.Sem7Remarks || row['Sem 7 Remarks'],
+        CGPA_Sem8: row.Sem8CGPA || row['Sem 8 CGPA'],
+        Grade_Sem8: row.Sem8Grade || row['Sem 8 Grade'],
+        Remarks_Sem8: row.Sem8Remarks || row['Sem 8 Remarks'],
+        CGPA_Cons: row.ConsolidatedCGPA || row['Consolidated CGPA'],
+        Grade_Cons: row.ConsolidatedGrade || row['Consolidated Grade'],
+        Remarks_Cons: row.ConsolidatedRemarks || row['Consolidated Remarks'],
+        
+        // Date and signature
+        Academic_Date: row.Date || row['Date'],
+        Academic_Signature: row.StudentSignatureName || row['Student Signature Name'] || row.signature,
       };
       
       const profileData = buildStudentProfileData(
@@ -634,6 +723,40 @@ router.patch('/students/:id/meeting', auth, async (req, res) => {
   }
 });
 
+// ── PATCH /students/:id/profile ─────────────────────────────────────────────
+router.patch('/students/:id/profile', auth, async (req, res) => {
+  try {
+    await ensureAppSchema();
+    if (!requireCoordinator(req, res)) return;
+
+    const coordinator = await getCoordinator(req);
+    if (!coordinator) return res.status(404).json({ error: 'Coordinator not found.' });
+
+    const { profileData } = req.body;
+    if (!profileData || typeof profileData !== 'object') {
+      return res.status(400).json({ error: 'profileData object is required.' });
+    }
+
+    const existing = await db.query(
+      `SELECT id, profile_data FROM users WHERE id = $1 AND role = 'student'`,
+      [req.params.id]
+    );
+    if (!existing.rows.length) return res.status(404).json({ error: 'Student not found.' });
+
+    const merged = { ...(existing.rows[0].profile_data || {}), ...profileData };
+
+    await db.query(
+      `UPDATE users SET profile_data = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`,
+      [merged, req.params.id]
+    );
+
+    res.json({ message: 'Student profile updated.', profileData: merged });
+  } catch (error) {
+    console.error('Coordinator update student profile error:', error);
+    res.status(500).json({ error: 'Failed to update student profile.' });
+  }
+});
+
 // ── DELETE /students/:id ───────────────────────────────────────────────────
 router.delete('/students/:id', auth, async (req, res) => {
   try {
@@ -657,6 +780,57 @@ router.delete('/students/:id', auth, async (req, res) => {
   } catch (error) {
     console.error('Delete student error:', error);
     res.status(500).json({ error: 'Failed to delete student.' });
+  }
+});
+
+// ── Coordinator Profile Endpoints ────────────────────────────────────────────
+router.get('/profile', auth, async (req, res) => {
+  try {
+    await ensureAppSchema();
+    if (!requireCoordinator(req, res)) return;
+
+    const coordinator = await getCoordinator(req);
+    if (!coordinator) return res.status(404).json({ error: 'Coordinator not found.' });
+
+    res.json({
+      id: coordinator.id,
+      name: coordinator.name,
+      email: coordinator.email,
+      division: coordinator.division || '',
+      profileData: coordinator.profile_data || {},
+    });
+  } catch (error) {
+    console.error('Get coordinator profile error:', error);
+    res.status(500).json({ error: 'Failed to fetch coordinator profile.' });
+  }
+});
+
+router.patch('/profile', auth, async (req, res) => {
+  try {
+    await ensureAppSchema();
+    if (!requireCoordinator(req, res)) return;
+
+    const { profileData } = req.body;
+    if (!profileData || typeof profileData !== 'object') {
+      return res.status(400).json({ error: 'profileData object is required.' });
+    }
+
+    const existing = await db.query(
+      `SELECT profile_data FROM users WHERE id = $1 AND role = 'coordinator'`,
+      [req.user.id]
+    );
+
+    const merged = { ...(existing.rows[0]?.profile_data || {}), ...profileData };
+
+    await db.query(
+      `UPDATE users SET profile_data = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`,
+      [merged, req.user.id]
+    );
+
+    res.json({ message: 'Coordinator profile saved.', profileData: merged });
+  } catch (error) {
+    console.error('Update coordinator profile error:', error);
+    res.status(500).json({ error: 'Failed to save coordinator profile.' });
   }
 });
 

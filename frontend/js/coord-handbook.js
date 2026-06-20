@@ -64,13 +64,19 @@ function renderCoordIndex() {
     </div>`;
 }
 
-function renderCoordProfile(s) {
+function renderCoordProfile(s, editMode = false) {
   const pd = s.profileData || {};
   const g = (...keys) => chG(pd, ...keys);
-  const fieldGrid = (flds) => `<div class="field-grid">${flds.map(f => chField(f.l, f.v)).join('')}</div>`;
+  const escStr = (val) => String(val || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  
+  const editInput = (k, v, ph) => `<input name="${k}" value="${escStr(v)}" class="edit-input" placeholder="${ph}" style="width:100%;box-sizing:border-box">`;
   const card = (title, flds, mt) => `<div class="handbook-card"${mt?' style="margin-top:1rem"':''}>
-    ${title ? `<div class="handbook-card-title">${title}</div>` : ''}${fieldGrid(flds)}</div>`;
-
+    ${title ? `<div class="handbook-card-title">${title}</div>` : ''}<div class="field-grid">${flds.map(f => 
+      editMode 
+        ? `<div class="fas-field"><label class="fas-field-label">${f.l}</label>${editInput(f.k, f.v, f.l)}</div>`
+        : chField(f.l, f.v)
+    ).join('')}</div></div>`;
+  
   const semRows = [
     {label:'10th SSC',bk:'SSC_Board',yk:'SSC_Year',gk:'SSC_Grade'},
     {label:'12th (10+2) HSSC',bk:'HSSC_Board',yk:'HSSC_Year',gk:'HSSC_Grade'},
@@ -84,34 +90,72 @@ function renderCoordProfile(s) {
     {rel:'Brother/Sister',nk:'Family_Sib3_Name',ak:'Family_Sib3_Age',qk:'Family_Sib3_Qual'},
   ];
   const actRows = Array.from({length:5},(_,i)=>({sk:`Activity_Sem_${i+1}`,ak:`Activity_Name_${i+1}`,ck:`Activity_Achievement_${i+1}`}));
-  const cv = k => g(k) ? `<span style="color:var(--uni-blue-dark)">${g(k)}</span>` : `<span class="fas-field-empty">—</span>`;
+  
+  const editBtn = `<button class="btn btn-dark" onclick="toggleCoordProfileEdit(${s.id})"><span>✏️ Edit Details</span></button>`;
+  const saveBtn = `<button class="btn btn-primary" onclick="saveCoordProfile(${s.id})"><span>Save</span></button>
+                   <button class="btn btn-dark" onclick="loadCoordHandbook(${s.id})" style="margin-left:0.5rem"><span>Cancel</span></button>`;
+
+  const profileFields = [
+    {k:'SchoolName', l:'School Name', v:g('SchoolName','School')},
+    {k:'DepartmentName', l:'Department', v:s.department||g('DepartmentName','department')},
+    {k:'Programme', l:'Programme', v:g('Programme','program')},
+    {k:'Yearofadmission', l:'Year of Admission', v:g('Yearofadmission','YearOfAdmission')},
+    {k:'dob', l:'Date of Birth', v:g('dob','DOB')},
+    {k:'mobile_number', l:'Mobile', v:g('mobile_number','mobile')},
+  ];
+  
+  const addrFields = [
+    {k:'PresentAddress', l:'Present Address', v:g('PresentAddress')},
+    {k:'PresentCity', l:'City', v:g('PresentCity')},
+    {k:'PresentState', l:'State', v:g('PresentState')},
+    {k:'PresentPincode', l:'Pincode', v:g('PresentPincode')},
+    {k:'PostalAddress', l:'Postal Address', v:g('PostalAddress')},
+  ];
+  
+  const permAddrFields = [
+    {k:'PermanentAddress', l:'Permanent Address', v:g('PermanentAddress')},
+    {k:'PermanentCity', l:'City', v:g('PermanentCity')},
+    {k:'PermanentState', l:'State', v:g('PermanentState')},
+    {k:'PermanentPincode', l:'Pincode', v:g('PermanentPincode')},
+  ];
+  
+  const parentFields = [
+    {k:'FatherName', l:"Father's Name", v:g('FatherName')},
+    {k:'FatherMobile1', l:"Father's Mobile 1", v:g('FatherMobile1')},
+    {k:'FatherMobile2', l:"Father's Mobile 2", v:g('FatherMobile2')},
+    {k:'MotherName', l:"Mother's Name", v:g('MotherName')},
+    {k:'MotherMobile1', l:"Mother's Mobile 1", v:g('MotherMobile1')},
+    {k:'MotherMobile2', l:"Mother's Mobile 2", v:g('MotherMobile2')},
+    {k:'HostelerDayScholar', l:'Hosteler / Day Scholar', v:g('HostelerDayScholar')},
+  ];
+  
+  const guardianFields = [
+    {k:'LocalGuardianName', l:'Name', v:g('LocalGuardianName')},
+    {k:'LocalGuardianAddress', l:'Address', v:g('LocalGuardianAddress')},
+    {k:'LocalGuardianMobile', l:'Mobile', v:g('LocalGuardianMobile')},
+  ];
+
+  const cv = (k) => {
+    const val = g(k);
+    return val ? `<span style="color:var(--uni-blue-dark)">${val}</span>` : `<span class="fas-field-empty">—</span>`;
+  };
 
   document.getElementById('ch-section-profile').innerHTML = `
-    <div class="section-page-title">Student Details</div>
-    ${card('', [
-      {l:'Student Name',v:s.name||''},{l:'School Name',v:g('SchoolName','School')},
-      {l:'Department',v:s.department||g('DepartmentName','department')},{l:'Programme',v:g('Programme','program')},
-      {l:'PRN',v:s.prnNumber||''},{l:'Year of Admission',v:g('Yearofadmission','YearOfAdmission')},
-      {l:'Date of Birth',v:g('dob','DOB')},{l:'Email',v:s.email||''},
-      {l:'Mobile',v:g('mobile_number','mobile')},{l:'Division',v:s.division||''},
-    ])}
-    ${card('Present Address Details',[
-      {l:'Present Address',v:g('PresentAddress')},{l:'City',v:g('PresentCity')},
-      {l:'State',v:g('PresentState')},{l:'Pincode',v:g('PresentPincode')},{l:'Postal Address',v:g('PostalAddress')},
-    ],true)}
-    ${card('Permanent Address Details',[
-      {l:'Permanent Address',v:g('PermanentAddress')},{l:'City',v:g('PermanentCity')},
-      {l:'State',v:g('PermanentState')},{l:'Pincode',v:g('PermanentPincode')},
-    ],true)}
-    ${card('Parent Contact Details',[
-      {l:"Father's Name",v:g('FatherName')},{l:"Father's Mobile 1",v:g('FatherMobile1')},
-      {l:"Father's Mobile 2",v:g('FatherMobile2')},{l:"Mother's Name",v:g('MotherName')},
-      {l:"Mother's Mobile 1",v:g('MotherMobile1')},{l:"Mother's Mobile 2",v:g('MotherMobile2')},
-      {l:'Hosteler / Day Scholar',v:g('HostelerDayScholar')},
-    ],true)}
-    ${card('Local Guardian',[
-      {l:'Name',v:g('LocalGuardianName')},{l:'Address',v:g('LocalGuardianAddress')},{l:'Mobile',v:g('LocalGuardianMobile')},
-    ],true)}
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.5rem">
+      <div class="section-page-title" style="margin-bottom:0">Student Details - ${s.name||''}</div>
+      <div>${editMode ? saveBtn : editBtn}</div>
+    </div>
+    <div id="coord-profile-save-msg"></div>
+    <form id="coord-profile-form" onsubmit="return false" data-student-id="${s.id}">
+      ${card('', [
+        {l:'Student Name',v:s.name||''},{l:'PRN',v:s.prnNumber||''},{l:'Email',v:s.email||''},{l:'Division',v:s.division||''},
+      ])}
+      ${card('Programme Details', profileFields, true)}
+      ${card('Present Address Details', addrFields, true)}
+      ${card('Permanent Address Details', permAddrFields, true)}
+      ${card('Parent Contact Details', parentFields, true)}
+      ${card('Local Guardian', guardianFields, true)}
+    </form>
     <div class="handbook-card" style="margin-top:1rem">
       <div class="handbook-card-title">Family Details</div>
       <div class="table-shell"><table class="allocation-table">
@@ -124,17 +168,6 @@ function renderCoordProfile(s) {
       <div class="table-shell"><table class="allocation-table">
         <thead><tr><th>Examination</th><th>Board / College</th><th>Year</th><th>Grade / %</th></tr></thead>
         <tbody>${semRows.map(r=>`<tr><td><strong>${r.label}</strong></td><td>${cv(r.bk)}</td><td>${cv(r.yk)}</td><td>${cv(r.gk)}</td></tr>`).join('')}</tbody>
-      </table></div>
-    </div>
-    <div class="handbook-card" style="margin-top:1rem">
-      <div class="handbook-card-title">Hobbies and Interest</div>
-      <p class="${g('Hobbies') ? '' : 'fas-field-empty'}" style="line-height:2">${g('Hobbies','hobbies') || '................................'}</p>
-    </div>
-    <div class="handbook-card" style="margin-top:1rem">
-      <div class="handbook-card-title">Participation in Co-curricular and Extracurricular Activities</div>
-      <div class="table-shell"><table class="allocation-table">
-        <thead><tr><th>Sr.</th><th>Semester(s)</th><th>Activity(s)</th><th>Achievement(s)</th></tr></thead>
-        <tbody>${actRows.map((r,i)=>`<tr><td>${i+1}</td><td>${cv(r.sk)}</td><td>${cv(r.ak)}</td><td>${cv(r.ck)}</td></tr>`).join('')}</tbody>
       </table></div>
     </div>`;
 }
@@ -321,17 +354,51 @@ function renderCoordVision() {
     </div>`;
 }
 
-function renderAllCoordHandbook(student) {
+function renderAllCoordHandbook(student, editMode = false) {
   coordHandbookStudent = student;
   renderCoordHandbook(student);
   renderCoordIndex();
-  renderCoordProfile(student);
+  renderCoordProfile(student, editMode);
   renderCoordAcademic(student, false);
   renderCoordMentorInfo(student);
   renderCoordMeeting(student);
   renderCoordVision();
   showHandbookSection('handbook');
 }
+
+window.toggleCoordProfileEdit = async function(studentId) {
+  const res = await fetch(`${API_BASE}/api/coordinator/students/${studentId}/profile`, {
+    headers: { 'x-auth-token': localStorage.getItem('token') },
+  });
+  const student = await res.json();
+  renderAllCoordHandbook(student, true);
+};
+
+window.saveCoordProfile = async function(studentId) {
+  const form = document.getElementById('coord-profile-form');
+  if (!form) return;
+  const profileData = {};
+  form.querySelectorAll('input[name]').forEach(inp => {
+    if (inp.name) profileData[inp.name] = inp.value.trim();
+  });
+  const msgEl = document.getElementById('coord-profile-save-msg');
+  msgEl.innerHTML = '<span class="text-muted" style="font-size:0.88rem">Saving…</span>';
+  try {
+    const res = await fetch(`${API_BASE}/api/coordinator/students/${studentId}/profile`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'x-auth-token': localStorage.getItem('token') },
+      body: JSON.stringify({ profileData }),
+    });
+    const data = await res.json();
+    if (!res.ok) { msgEl.innerHTML = `<span style="color:#b91c1c;font-size:0.88rem">${data.error || 'Failed.'}</span>`; return; }
+    coordHandbookStudent.profileData = { ...coordHandbookStudent.profileData, ...data.profileData };
+    renderAllCoordHandbook(coordHandbookStudent, false);
+    msgEl.innerHTML = '<span style="color:var(--emerald-600);font-size:0.88rem">Saved!</span>';
+    setTimeout(() => { if (msgEl) msgEl.innerHTML = ''; }, 2000);
+  } catch (err) {
+    msgEl.innerHTML = `<span style="color:#b91c1c;font-size:0.88rem">${err.message || 'Failed.'}</span>`;
+  }
+};
 
 window.loadCoordHandbook = async function(studentId) {
   const area = document.getElementById('handbook-content-area');

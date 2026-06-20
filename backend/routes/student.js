@@ -46,6 +46,18 @@ router.get('/me', auth, async (req, res) => {
       return res.status(404).json({ error: 'Student profile not found.' });
     }
 
+    // Fetch coordinator profile data for this division
+    let coordinatorProfile = {};
+    if (row.division) {
+      const coordResult = await db.query(
+        `SELECT profile_data FROM users WHERE role = 'coordinator' AND division = $1 LIMIT 1`,
+        [row.division]
+      );
+      if (coordResult.rows[0]) {
+        coordinatorProfile = coordResult.rows[0].profile_data || {};
+      }
+    }
+
     res.json({
       student: {
         id: row.id,
@@ -61,6 +73,7 @@ router.get('/me', auth, async (req, res) => {
         updatedAt: row.fas_updated_at,
         data: row.form_data || {},
       } : null,
+      coordinatorProfile: coordinatorProfile,
     });
   } catch (error) {
     console.error('Student profile error:', error);

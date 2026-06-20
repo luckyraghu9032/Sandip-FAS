@@ -269,87 +269,86 @@
           <div style="margin-top:1rem;padding:0.85rem 1rem;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:0.75rem;font-size:0.82rem;color:#92400e">
             Only students assigned to your division can be downloaded. Empty profile fields will appear as dotted lines in the PDF.
           </div>
-        </div>
-      </div>
+</div>
+       </div>
 
-            <!-- ── Coordinator Profile Tab ── -->
-      <div id="tab-coordinator-profile" style="display:none">
-        <div class="card">
-          <div class="panel-header">
-            <div>
-              <p class="panel-eyebrow">My Profile</p>
-              <h2 class="panel-title">Coordinator Information</h2>
-            </div>
-          </div>
-          <p class="text-muted mb-4">Enter your mentor information. This will appear in student FAS handbooks.</p>
-          <form onsubmit="return false" id="coordinator-profile-form">
-            <div class="form-group" style="max-width:20rem">
-              <label class="form-label">Academic Year</label>
-              <div class="input-wrapper">
-                <i data-lucide="calendar" class="input-icon"></i>
-                <input type="text" id="academic-year" class="form-input" placeholder="e.g. 2024-25">
-              </div>
-            </div>
-            <div class="form-group" style="max-width:25rem">
-              <label class="form-label">Mentor Name</label>
-              <div class="input-wrapper">
-                <i data-lucide="user" class="input-icon"></i>
-                <input type="text" id="mentor-name" class="form-input" placeholder="Your full name">
-              </div>
-            </div>
-            <div class="form-group" style="max-width:25rem">
-              <label class="form-label">School</label>
-              <div class="input-wrapper">
-                <i data-lucide="book-open" class="input-icon"></i>
-                <input type="text" id="mentor-school" class="form-input" placeholder="School of Computer Science">
-              </div>
-            </div>
-            <div class="form-group" style="max-width:25rem">
-              <label class="form-label">Department</label>
-              <div class="input-wrapper">
-                <i data-lucide="bookmark" class="input-icon"></i>
-                <input type="text" id="mentor-department" class="form-input" placeholder="Computer Science">
-              </div>
-            </div>
-            <div class="form-group" style="max-width:25rem">
-              <label class="form-label">Contact Number</label>
-              <div class="input-wrapper">
-                <i data-lucide="phone" class="input-icon"></i>
-                <input type="text" id="mentor-contact" class="form-input" placeholder="Mobile number">
-              </div>
-            </div>
-            <div class="form-group" style="max-width:25rem">
-              <label class="form-label">Email ID</label>
-              <div class="input-wrapper">
-                <i data-lucide="mail" class="input-icon"></i>
-                <input type="email" id="mentor-email" class="form-input" placeholder="your.email@sandipuniversity.edu.in">
-              </div>
-            </div>
-            <div class="form-group" style="max-width:20rem">
-              <label class="form-label">No of Mentee Allocated</label>
-              <div class="input-wrapper">
-                <i data-lucide="users" class="input-icon"></i>
-                <input type="number" id="mentee-count" class="form-input" placeholder="e.g. 30">
-              </div>
-            </div>
-            <div class="form-group" style="max-width:25rem">
-              <label class="form-label">Class of Mentee</label>
-              <div class="input-wrapper">
-                <i data-lucide="graduation-cap" class="input-icon"></i>
-                <input type="text" id="mentee-class" class="form-input" placeholder="e.g. BE-A, BE-B">
-              </div>
-            </div>
-            <div class="form-error" id="profile-error" style="display:none"></div>
-            <div class="form-success" id="profile-success" style="display:none"></div>
-            <button type="button" class="btn btn-primary" id="save-profile-btn" onclick="saveCoordinatorProfile()">
-              <i data-lucide="save"></i> Save Profile
-            </button>
-          </form>
-        </div>
-      </div>
+       <!-- ── Coordinator Profile Tab ── -->
+       <div id="tab-coordinator-profile" style="display:none">
+         <div class="card">
+           <div class="panel-header">
+             <div>
+               <p class="panel-eyebrow">Mentor Information</p>
+               <h2 class="panel-title">Academic Year ............</h2>
+             </div>
+           </div>
+           <div id="coordinator-profile-form">
+             <div class="form-group">
+               <label for="academic-year" class="form-label">Academic Year</label>
+               <div class="input-wrapper">
+                 <i data-lucide="calendar" class="input-icon"></i>
+                 <input type="text" id="academic-year" class="form-input" placeholder="e.g. 2024-25">
+               </div>
+             </div>
+             <div class="form-group">
+               <label for="mentor-name" class="form-label">Mentor Name</label>
+               <div class="input-wrapper">
+                 <i data-lucide="user" class="input-icon"></i>
+                 <input type="text" id="mentor-name" class="form-input" placeholder="Your full name">
+               </div>
+             </div>
+             <div class="form-group">
+               <label for="mentor-school" class="form-label">School</label>
+               <div class="input-wrapper">
+                 <i data-lucide="book-open" class="input-icon"></i>
+                 <input type="text" id="mentor-school" class="form-input" placeholder="School name">
+               </div>
+             </div>
+             <div class="form-group">
+               <label for="mentor-department" class="form-label">Department</label>
+               <div class="input-wrapper">
+                 <i data-lucide="bookmark" class="input-icon"></i>
+                 <input type="text" id="mentor-department" class="form-input" placeholder="Department name">
+               </div>
+             </div>
+             <div class="form-group">
+               <label for="mentor-contact" class="form-label">Contact Details</label>
+               <div class="input-wrapper">
+                 <i data-lucide="phone" class="input-icon"></i>
+                 <input type="text" id="mentor-contact" class="form-input" placeholder="Mobile number">
+               </div>
+             </div>
+             <div class="form-group">
+               <label for="mentor-email" class="form-label">Email ID</label>
+               <div class="input-wrapper">
+                 <i data-lucide="mail" class="input-icon"></i>
+                 <input type="email" id="mentor-email" class="form-input" placeholder="Email address">
+               </div>
+             </div>
+             <div class="form-group">
+               <label for="mentee-count" class="form-label">No of Mentee Allocated</label>
+               <div class="input-wrapper">
+                 <i data-lucide="users" class="input-icon"></i>
+                 <input type="number" id="mentee-count" class="form-input" placeholder="Number of students" min="0">
+               </div>
+             </div>
+             <div class="form-group">
+               <label for="mentee-class" class="form-label">Class of a Mentee</label>
+               <div class="input-wrapper">
+                 <i data-lucide="tag" class="input-icon"></i>
+                 <input type="text" id="mentee-class" class="form-input" placeholder="e.g. FE-A, SE-B (comma separated)">
+               </div>
+             </div>
+             <div class="form-error" id="profile-error" style="display:none"></div>
+             <div class="form-success" id="profile-success" style="display:none"></div>
+             <button type="button" class="btn btn-primary" id="save-profile-btn">
+               <i data-lucide="save"></i> Save Profile
+             </button>
+           </div>
+         </div>
+       </div>
 
-      <!-- ── Meeting Reports Tab ── -->
-      <div id="tab-meetings" style="display:none">
+       <!-- ── Meeting Reports Tab ── -->
+       <div id="tab-meetings" style="display:none">
         <div class="card">
           <div class="panel-header">
             <div>
@@ -378,7 +377,7 @@
     </main>
   </div>
 
-  <!-- Change Password Modal -->
+  <!-- Coordinator Profile Tab -->`n  <script src="js/coord-profile.js"></script>`n  <!-- Change Password Modal -->
   <div class="modal-backdrop" id="change-password-modal" style="display:none">
     <div class="modal-container">
       <div class="modal-content">
@@ -429,7 +428,6 @@
   <script src="js/dashboard.js"></script>
   <script src="js/coord-handbook.js"></script>
   <script src="js/fas-pdf.js"></script>
-  <script src="js/coord-profile.js"></script>
   <script src="js/coord-fas-download.js"></script>
   <script>
     const user = checkAuth('coordinator');
@@ -439,13 +437,14 @@
       document.getElementById('overview-welcome-name').textContent = `Welcome, ${user.name}`;
       lucide.createIcons();
       // Hide all tabs except overview on load
-      ['students','handbook','meetings','fas','coordinator-profile'].forEach(t => { document.getElementById(`tab-${t}`).style.display = 'none'; });
+      HIDDEN_TABS.forEach(t => { document.getElementById(`tab-${t}`).style.display = 'none'; });
       initCoordinatorDashboard();
     }
 
     // ── Tab switching ─────────────────────────────────────────────────────────
     const TAB_TITLES = { overview: 'Overview', students: 'Students', handbook: 'Handbook', meetings: 'Meeting Reports', fas: 'FAS Download', 'coordinator-profile': 'My Profile' };
     const ALL_TABS = ['overview','students','handbook','meetings','fas','coordinator-profile'];
+    const HIDDEN_TABS = ['students','handbook','meetings','fas','coordinator-profile'];
 
     function switchTab(tab) {
       document.querySelectorAll('.sidebar-link[data-tab]').forEach(l => l.classList.toggle('active', l.dataset.tab === tab));
@@ -500,9 +499,6 @@
           uploadSuccess.style.display = 'block';
           fileInput.value = '';
           await loadStudents();
-
-      // Load coordinator profile for FAS PDF
-      loadCoordinatorProfile();
         } catch (error) {
           uploadError.textContent = error.message || 'Failed to process file';
           uploadError.style.display = 'block';
@@ -514,9 +510,6 @@
       });
 
       await loadStudents();
-
-      // Load coordinator profile for FAS PDF
-      loadCoordinatorProfile();
 
       // Meeting student selector
       document.getElementById('meeting-student-select').addEventListener('change', async function() {
@@ -780,4 +773,3 @@
   </script>
 </body>
 </html>
-
