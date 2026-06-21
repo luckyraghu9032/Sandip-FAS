@@ -545,7 +545,7 @@
         const countEl = document.getElementById('overview-student-count');
         if (countEl) countEl.textContent = allStudents.length;
         const pendingEl = document.getElementById('overview-pending-count');
-        if (pendingEl) pendingEl.textContent = '—';
+        if (pendingEl) pendingEl.textContent = '................................';
       } catch (error) {
         console.error('Failed to load students:', error);
       }
@@ -562,7 +562,7 @@
         <tr id="student-row-${s.id}">
           <td><div class="table-person"><strong>${escapeHtml(s.name)}</strong></div></td>
           <td>${escapeHtml(s.email)}</td>
-          <td>${escapeHtml(s.prn_number || 'Not supplied')}</td>
+          <td>${escapeHtml(s.prn_number || '................................')}</td>
           <td><button class="table-action-btn" data-id="${s.id}" data-name="${escapeHtml(s.name)}" title="Delete">🗑</button></td>
         </tr>`).join('');
     }
@@ -641,14 +641,14 @@
       // Student columns — read only for coordinator
       const sCell = k => g(k)
         ? `<span style="color:var(--uni-blue-dark);font-weight:500">${escapeHtml(g(k))}</span>`
-        : `<span style="color:var(--text-muted);font-size:0.82rem">—</span>`;
+        : `<span class="fas-field-empty" style="font-size:0.82rem">................................</span>`;
 
       // Coordinator editable cells
       const cCell = (k, placeholder) => editMode
         ? `<input name="${k}" value="${escapeHtml(g(k))}" class="edit-input" placeholder="${placeholder}" style="min-width:7rem">`
         : (g(k)
             ? `<span style="color:var(--emerald-600);font-weight:600">${escapeHtml(g(k))}</span>`
-            : `<span style="color:#f59e0b;font-size:0.82rem;font-weight:600">Pending</span>`);
+            : `<span class="fas-field-empty" style="font-size:0.82rem">................................</span>`);
 
       const hodSign  = g('Meeting_HOD_Sign');
       const deanSign = g('Meeting_Dean_Sign');
@@ -675,7 +675,7 @@
       const area = document.getElementById('meeting-report-area');
       area.innerHTML = `
         <div style="display:flex;align-items:center;justify-content:space-between;margin:1rem 0 0.75rem;flex-wrap:wrap;gap:0.5rem">
-          <div style="font-weight:700;color:var(--uni-blue-dark)">${escapeHtml(student.name)} &nbsp;<span class="text-muted" style="font-weight:400;font-size:0.88rem">PRN: ${escapeHtml(student.prnNumber||'')}</span></div>
+          <div style="font-weight:700;color:var(--uni-blue-dark)">${escapeHtml(student.name)} &nbsp;<span class="text-muted" style="font-weight:400;font-size:0.88rem">PRN: ${escapeHtml(student.prnNumber || '................................')}</span></div>
           <div>${editMode ? saveBtn : editBtn}</div>
         </div>
         <div id="coord-meeting-save-msg"></div>
@@ -778,6 +778,21 @@
       return String(value || '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#39;");
     }
   </script>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-brand">
+        <i data-lucide="book-open" class="icon-sm text-gold"></i>
+        <span>SUN NEXUS SOLUTIONS, Sandip University FAS Management System</span>
+      </div>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+      <p class="footer-copyright">&copy; 2026 Sandip University. All rights reserved.</p>
+    </div>
+  </footer>
 </body>
 </html>
 

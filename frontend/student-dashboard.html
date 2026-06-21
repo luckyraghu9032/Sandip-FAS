@@ -160,12 +160,27 @@
   <script src="js/dashboard.js"></script>
   <script src="js/fas-pdf.js"></script>
   <script src="js/student-dashboard-app.js"></script>
-  <script>
-    const user = checkAuth('student');
-    if (user) {
-      document.getElementById('user-display-name').textContent = user.name;
-      lucide.createIcons();
-    }
-  </script>
-</body>
+    <script>
+      const user = checkAuth('student');
+      if (user) {
+        document.getElementById('user-display-name').textContent = user.name;
+        lucide.createIcons();
+      }
+    </script>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container footer-container">
+        <div class="footer-brand">
+          <i data-lucide="book-open" class="icon-sm text-gold"></i>
+          <span>SUN NEXUS SOLUTIONS, Sandip University FAS Management System</span>
+        </div>
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+        <p class="footer-copyright">&copy; 2026 Sandip University. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
 </html>

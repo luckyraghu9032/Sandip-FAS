@@ -416,7 +416,7 @@ function renderAcademic(editMode = false) {
 
   const cell = (k, placeholder) => editMode
     ? `<input name="${k}" value="${escStr(g(k))}" class="edit-input" placeholder="${placeholder}" style="min-width:5rem">`
-    : `<span class="${g(k) ? '' : 'fas-field-empty'}">${g(k) || 'â€”â€”â€”'}</span>`;
+    : `<span class="${g(k) ? '' : 'fas-field-empty'}">${g(k) || '................................'}</span>`;
 
   const officialUseHTML = () => {
     const classes = [
@@ -590,14 +590,14 @@ function renderMeeting(editMode = false) {
   // Student editable cell
   const sCell = (k, placeholder, wide) => editMode
     ? `<input name="${k}" value="${escStr(g(k))}" class="edit-input" placeholder="${placeholder}" style="min-width:${wide || '5rem'}">`
-    : `<span class="${g(k) ? '' : 'fas-field-empty'}">${g(k) || 'â€”â€”'}</span>`;
+    : `<span class="${g(k) ? '' : 'fas-field-empty'}">${g(k) || '................................'}</span>`;
 
   // Coordinator-only cell (always read-only for student)
   const cCell = (k) => {
     const val = g(k);
-    return val
-      ? `<span style="color:var(--emerald-600);font-weight:600">${val}</span>`
-      : `<span style="color:var(--text-muted);font-size:0.82rem;font-style:italic">Pending</span>`;
+      return val
+        ? `<span style="color:var(--emerald-600);font-weight:600">${val}</span>`
+        : `<span class="fas-field-empty" style="font-size:0.82rem">................................</span>`;
   };
 
   const editBtn = `<button class="btn btn-dark" onclick="toggleMeetingEdit()"><span>âœï¸ Edit</span></button>`;

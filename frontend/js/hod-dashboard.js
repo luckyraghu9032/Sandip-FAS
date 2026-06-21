@@ -309,7 +309,7 @@
           </div>
         </td>
         <td>${escapeHtml(coordinator.email)}</td>
-        <td>${escapeHtml(coordinator.prnNumber || 'Not supplied')}</td>
+          <td>${escapeHtml(coordinator.prnNumber || '................................')}</td>
         <td>
           <select class="form-input form-select table-select" data-division-email="${escapeHtml(coordinator.email)}">
             ${buildDivisionOptionsMarkup(coordinator.division, 'Unassigned')}
@@ -363,7 +363,7 @@
             <span>${escapeHtml(coordinator.email)}</span>
           </div>
         </td>
-        <td>${escapeHtml(coordinator.prnNumber || 'Not supplied')}</td>
+          <td>${escapeHtml(coordinator.prnNumber || '................................')}</td>
         <td><span class="division-badge">Division ${escapeHtml(coordinator.division)}</span></td>
       </tr>
     `).join('');
