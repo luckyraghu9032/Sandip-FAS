@@ -21,6 +21,10 @@
         </div>
       </div>
       <div class="user-profile-nav">
+        <div class="notification-wrapper" id="notification-wrapper" style="position:relative;margin-right:0.5rem">
+          <i data-lucide="bell" class="icon icon-emerald" id="notification-icon" style="cursor:pointer"></i>
+          <span class="notification-badge" id="notification-badge" style="position:absolute;top:-0.25rem;right:-0.25rem;background:#ef4444;color:#fff;border-radius:999px;padding:0.1rem 0.45rem;font-size:0.7rem;font-weight:700;display:none;min-width:1.25rem;height:1.25rem;display:flex;align-items:center;justify-content:center"></span>
+        </div>
         <div class="user-name-desktop text-muted" id="user-display-name"></div>
         <div class="profile-avatar avatar-emerald" id="user-avatar" title="Toggle Menu">
           <i data-lucide="user" class="icon-sm"></i>
@@ -59,6 +63,14 @@
           My Profile
         </a>
         <div class="sidebar-footer-actions">
+          <a href="#" class="sidebar-link" onclick="openSendStudentNoticeModal()">
+            <i data-lucide="send" class="icon-sm"></i>
+            Send Notice to Students
+          </a>
+          <a href="#" class="sidebar-link" onclick="openSendHodNoticeModal()">
+            <i data-lucide="send" class="icon-sm"></i>
+            Send Notice to HOD
+          </a>
           <a href="#" class="sidebar-link" onclick="openModal('change-password-modal')">
             <i data-lucide="lock" class="icon-sm"></i>
             Change Password
@@ -209,7 +221,7 @@
             </div>
           </div>
           <div class="form-group" style="max-width:24rem">
-            <label class="form-label">Select Student</label>
+            <label for="handbook-student-select" class="form-label">Select Student</label>
             <div class="input-wrapper">
               <i data-lucide="user" class="input-icon"></i>
               <select id="handbook-student-select" class="form-input form-select" onchange="loadCoordHandbook(this.value)">
@@ -284,56 +296,56 @@
           <p class="text-muted mb-4">Enter your mentor information. This will appear in student FAS handbooks.</p>
           <form onsubmit="return false" id="coordinator-profile-form">
             <div class="form-group" style="max-width:20rem">
-              <label class="form-label">Academic Year</label>
+              <label for="academic-year" class="form-label">Academic Year</label>
               <div class="input-wrapper">
                 <i data-lucide="calendar" class="input-icon"></i>
                 <input type="text" id="academic-year" class="form-input" placeholder="e.g. 2024-25">
               </div>
             </div>
             <div class="form-group" style="max-width:25rem">
-              <label class="form-label">Mentor Name</label>
+              <label for="mentor-name" class="form-label">Mentor Name</label>
               <div class="input-wrapper">
                 <i data-lucide="user" class="input-icon"></i>
                 <input type="text" id="mentor-name" class="form-input" placeholder="Your full name">
               </div>
             </div>
             <div class="form-group" style="max-width:25rem">
-              <label class="form-label">School</label>
+              <label for="mentor-school" class="form-label">School</label>
               <div class="input-wrapper">
                 <i data-lucide="book-open" class="input-icon"></i>
                 <input type="text" id="mentor-school" class="form-input" placeholder="School of Computer Science">
               </div>
             </div>
             <div class="form-group" style="max-width:25rem">
-              <label class="form-label">Department</label>
+              <label for="mentor-department" class="form-label">Department</label>
               <div class="input-wrapper">
                 <i data-lucide="bookmark" class="input-icon"></i>
                 <input type="text" id="mentor-department" class="form-input" placeholder="Computer Science">
               </div>
             </div>
             <div class="form-group" style="max-width:25rem">
-              <label class="form-label">Contact Number</label>
+              <label for="mentor-contact" class="form-label">Contact Number</label>
               <div class="input-wrapper">
                 <i data-lucide="phone" class="input-icon"></i>
                 <input type="text" id="mentor-contact" class="form-input" placeholder="Mobile number">
               </div>
             </div>
             <div class="form-group" style="max-width:25rem">
-              <label class="form-label">Email ID</label>
+              <label for="mentor-email" class="form-label">Email ID</label>
               <div class="input-wrapper">
                 <i data-lucide="mail" class="input-icon"></i>
                 <input type="email" id="mentor-email" class="form-input" placeholder="your.email@sandipuniversity.edu.in">
               </div>
             </div>
             <div class="form-group" style="max-width:20rem">
-              <label class="form-label">No of Mentee Allocated</label>
+              <label for="mentee-count" class="form-label">No of Mentee Allocated</label>
               <div class="input-wrapper">
                 <i data-lucide="users" class="input-icon"></i>
                 <input type="number" id="mentee-count" class="form-input" placeholder="e.g. 30">
               </div>
             </div>
             <div class="form-group" style="max-width:25rem">
-              <label class="form-label">Class of Mentee</label>
+              <label for="mentee-class" class="form-label">Class of Mentee</label>
               <div class="input-wrapper">
                 <i data-lucide="graduation-cap" class="input-icon"></i>
                 <input type="text" id="mentee-class" class="form-input" placeholder="e.g. BE-A, BE-B">
@@ -362,7 +374,7 @@
 
           <!-- Student selector -->
           <div class="form-group" style="max-width:24rem">
-            <label class="form-label">Select Student</label>
+            <label for="meeting-student-select" class="form-label">Select Student</label>
             <div class="input-wrapper">
               <i data-lucide="user" class="input-icon"></i>
               <select id="meeting-student-select" class="form-input form-select">
@@ -778,6 +790,198 @@
       return String(value || '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#39;");
     }
   </script>
+
+  <!-- Notifications Modal -->
+  <div class="modal-backdrop" id="notifications-modal" style="display:none;z-index:1000">
+    <div class="modal-container" style="max-width:500px;width:90%">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('notifications-modal')">
+          <i data-lucide="x"></i>
+        </button>
+        <div class="modal-header">
+          <div class="modal-icon-wrapper bg-emerald-light">
+            <i data-lucide="bell" class="icon-lg text-emerald"></i>
+          </div>
+          <h2 class="modal-title">Notifications</h2>
+          <p class="modal-subtitle">View and manage your messages</p>
+        </div>
+        <div id="notifications-list" style="max-height:400px;overflow-y:auto"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Send Notice to Students Modal -->
+  <div class="modal-backdrop" id="send-student-notice-modal" style="display:none;z-index:1001">
+    <div class="modal-container">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('send-student-notice-modal')">
+          <i data-lucide="x"></i>
+        </button>
+        <div class="modal-header">
+          <div class="modal-icon-wrapper bg-emerald-light">
+            <i data-lucide="send" class="icon-lg text-emerald"></i>
+          </div>
+          <h2 class="modal-title">Send Notice to Students</h2>
+          <p class="modal-subtitle">Notify students in your division</p>
+        </div>
+        <form class="modal-form" id="send-student-notice-form">
+          <div class="form-group">
+            <label for="student-notif-title" class="form-label">Title</label>
+            <input type="text" id="student-notif-title" name="title" class="form-input" placeholder="Notice title" required>
+          </div>
+          <div class="form-group">
+            <label for="student-notif-message" class="form-label">Message</label>
+            <textarea id="student-notif-message" name="message" class="form-input" placeholder="Enter your message..." rows="4" required></textarea>
+          </div>
+          <div class="form-error" id="student-notif-error" style="display:none"></div>
+          <button type="submit" class="btn btn-primary btn-block">
+            <span>Send Notice</span>
+            <i data-lucide="send"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Send Notice to HOD Modal -->
+<div class="modal-backdrop" id="send-hod-notice-modal" style="display:none;z-index:1001">
+  <div class="modal-container">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('send-hod-notice-modal')">
+        <i data-lucide="x"></i>
+      </button>
+      <div class="modal-header">
+        <div class="modal-icon-wrapper bg-emerald-light">
+          <i data-lucide="send" class="icon-lg text-emerald"></i>
+        </div>
+        <h2 class="modal-title">Send Notice to HOD</h2>
+        <p class="modal-subtitle">Notify HOD(s)</p>
+      </div>
+      <form class="modal-form" id="send-hod-notice-form">
+        <div class="form-group">
+          <label for="hod-notif-title" class="form-label">Title</label>
+          <input type="text" id="hod-notif-title" name="title" class="form-input" placeholder="Notice title" required>
+        </div>
+        <div class="form-group">
+          <label for="hod-notif-message" class="form-label">Message</label>
+          <textarea id="hod-notif-message" name="message" class="form-input" placeholder="Enter your message..." rows="4" required></textarea>
+        </div>
+        <div class="form-error" id="hod-notif-error" style="display:none"></div>
+        <button type="submit" class="btn btn-primary btn-block">
+          <span>Send Notice</span>
+          <i data-lucide="send"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="js/notifications.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initNotifications();
+    });
+
+    // Send Notice to Students
+    window.openSendStudentNoticeModal = function() {
+      const form = document.getElementById('send-student-notice-form');
+      const error = document.getElementById('student-notif-error');
+
+      if (form) {
+        form.reset();
+        error.style.display = 'none';
+        openModal('send-student-notice-modal');
+      }
+    };
+
+    const sendStudentNotifForm = document.getElementById('send-student-notice-form');
+    if (sendStudentNotifForm) {
+      sendStudentNotifForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = sendStudentNotifForm.title.value.trim();
+        const message = sendStudentNotifForm.message.value.trim();
+        const error = document.getElementById('student-notif-error');
+
+        if (!title || !message) {
+          error.textContent = 'Title and message are required.';
+          error.style.display = 'block';
+          return;
+        }
+
+        try {
+          const res = await fetch(`${API_BASE}/api/notifications/send-to-students`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-auth-token': localStorage.getItem('token'),
+            },
+            body: JSON.stringify({ title, message }),
+          });
+
+          const data = await res.json();
+          if (!res.ok) {
+            error.textContent = data.error || 'Failed to send notice.';
+            error.style.display = 'block';
+            return;
+          }
+
+          error.style.display = 'none';
+          sendStudentNotifForm.reset();
+          closeModal('send-student-notice-modal');
+          alert('Notice sent to all students in your division!');
+        } catch (err) {
+          error.textContent = err.message || 'Failed to send notice.';
+          error.style.display = 'block';
+        }
+      });
+    }
+  window.openSendHodNoticeModal = function() {
+        const form = document.getElementById('send-hod-notice-form');
+        const error = document.getElementById('hod-notif-error');
+        if (form) {
+          form.reset();
+          error.style.display = 'none';
+          openModal('send-hod-notice-modal');
+        }
+      };
+
+      const sendHodNotifForm = document.getElementById('send-hod-notice-form');
+      if (sendHodNotifForm) {
+        sendHodNotifForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const title = sendHodNotifForm.title.value.trim();
+          const message = sendHodNotifForm.message.value.trim();
+          const error = document.getElementById('hod-notif-error');
+          if (!title || !message) {
+            error.textContent = 'Title and message are required.';
+            error.style.display = 'block';
+            return;
+          }
+          try {
+            const res = await fetch(`${API_BASE}/api/notifications/send-to-hod`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-auth-token': localStorage.getItem('token'),
+              },
+              body: JSON.stringify({ title, message }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+              error.textContent = data.error || 'Failed to send notice.';
+              error.style.display = 'block';
+              return;
+            }
+            error.style.display = 'none';
+            sendHodNotifForm.reset();
+            closeModal('send-hod-notice-modal');
+            alert('Notice sent to HOD(s)!');
+          } catch (err) {
+            error.textContent = err.message || 'Failed to send notice.';
+            error.style.display = 'block';
+          }
+        });
+      }
+</script>
 
   <!-- Footer -->
   <footer class="footer">

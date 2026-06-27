@@ -88,6 +88,48 @@
         toggleSidebar(false);
       });
     });
+
+    const sendNotifForm = document.getElementById('send-notification-form');
+    const notifError = document.getElementById('notif-error');
+    if (sendNotifForm) {
+      sendNotifForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = sendNotifForm.title.value.trim();
+        const message = sendNotifForm.message.value.trim();
+
+        if (!title || !message) {
+          notifError.textContent = 'Title and message are required.';
+          notifError.style.display = 'block';
+          return;
+        }
+
+        try {
+          const res = await fetch(`${API_BASE}/api/notifications/send`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-auth-token': localStorage.getItem('token'),
+            },
+            body: JSON.stringify({ title, message }),
+          });
+
+          const data = await res.json();
+          if (!res.ok) {
+            notifError.textContent = data.error || 'Failed to send notification.';
+            notifError.style.display = 'block';
+            return;
+          }
+
+          notifError.style.display = 'none';
+          sendNotifForm.reset();
+          closeModal('send-notification-modal');
+          alert('Notice sent successfully to all coordinators!');
+        } catch (err) {
+          notifError.textContent = err.message || 'Failed to send notification.';
+          notifError.style.display = 'block';
+        }
+      });
+    }
   }
 
   async function loadCoordinatorRoster() {

@@ -15,10 +15,12 @@ const authRoutes = require('./routes/auth');
 const hodRoutes = require('./routes/hod');
 const coordinatorRoutes = require('./routes/coordinator');
 const studentRoutes = require('./routes/student');
+const notificationRoutes = require('./routes/notifications');
 app.use('/api/auth', authRoutes);
 app.use('/api/hod', hodRoutes);
 app.use('/api/coordinator', coordinatorRoutes);
 app.use('/api/student', studentRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Basic health check
 app.get('/api/health', (req, res) => {
@@ -26,6 +28,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Serve static frontend files
+app.use('/css', express.static(path.join(__dirname, '../frontend/css')));
 app.use(express.static(path.join(__dirname, '../frontend')));
 
 app.use((err, req, res, next) => {
@@ -50,7 +53,6 @@ app.use((err, req, res, next) => {
 async function startServer() {
   try {
     await ensureAppSchema();
-
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     }).on('error', (err) => {
@@ -63,4 +65,10 @@ async function startServer() {
   }
 }
 
-startServer();
+// Start server if run directly (local development)
+if (require.main === module) {
+  startServer();
+}
+
+// Export for serverless environments like Vercel
+module.exports = app;

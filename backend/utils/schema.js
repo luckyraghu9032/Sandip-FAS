@@ -53,6 +53,34 @@ async function syncUsersTable() {
   `);
 }
 
+async function syncNotificationsTable() {
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS notifications (
+      id SERIAL PRIMARY KEY,
+      sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      recipient_role VARCHAR(20),
+      recipient_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      recipient_division VARCHAR(50),
+      title VARCHAR(255) NOT NULL,
+      message TEXT NOT NULL,
+      is_read BOOLEAN DEFAULT false,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await db.query(`
+    CREATE INDEX IF NOT EXISTS idx_notifications_recipient ON notifications(recipient_id)
+  `);
+
+  await db.query(`
+    CREATE INDEX IF NOT EXISTS idx_notifications_recipient_role ON notifications(recipient_role, recipient_division)
+  `);
+
+  await db.query(`
+    CREATE INDEX IF NOT EXISTS idx_notifications_sender ON notifications(sender_id)
+  `);
+}
+
 async function syncFasTable() {
   await db.query(`
     CREATE TABLE IF NOT EXISTS fas_records (
@@ -103,6 +131,7 @@ async function ensureAppSchema() {
     schemaPromise = (async () => {
       await syncUsersTable();
       await syncFasTable();
+      await syncNotificationsTable();
     })().catch((error) => {
       schemaPromise = null;
       throw error;

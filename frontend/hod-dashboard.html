@@ -20,6 +20,10 @@
         </div>
       </div>
       <div class="user-profile-nav">
+        <div class="notification-wrapper" id="notification-wrapper" style="position:relative;margin-right:0.5rem">
+          <i data-lucide="bell" class="icon icon-blue" id="notification-icon" style="cursor:pointer"></i>
+          <span class="notification-badge" id="notification-badge" style="position:absolute;top:-0.25rem;right:-0.25rem;background:#ef4444;color:#fff;border-radius:999px;padding:0.1rem 0.45rem;font-size:0.7rem;font-weight:700;display:none;min-width:1.25rem;height:1.25rem;display:flex;align-items:center;justify-content:center"></span>
+        </div>
         <div class="user-name-desktop text-muted" id="user-display-name"></div>
         <div class="profile-avatar" id="user-avatar" title="Toggle Menu">
           <i data-lucide="user" class="icon-sm"></i>
@@ -46,6 +50,10 @@
           Reports
         </a>
         <div class="sidebar-footer-actions">
+          <a href="#" class="sidebar-link" onclick="openModal('send-notification-modal')">
+            <i data-lucide="send" class="icon-sm"></i>
+            Send Notice
+          </a>
           <a href="#" class="sidebar-link" onclick="openModal('change-password-modal')">
             <i data-lucide="lock" class="icon-sm"></i>
             Change Password
@@ -126,7 +134,7 @@
                   <label for="manual-coordinator-name" class="form-label">Coordinator Name</label>
                   <div class="input-wrapper">
                     <i data-lucide="user-round" class="input-icon"></i>
-                    <input type="text" id="manual-coordinator-name" class="form-input" placeholder="e.g. Rao MK" required>
+                    <input type="text" id="manual-coordinator-name" class="form-input" placeholder="e.g. Rao MK" autocomplete="name" required>
                   </div>
                 </div>
 
@@ -134,7 +142,7 @@
                   <label for="manual-coordinator-email" class="form-label">Email Address</label>
                   <div class="input-wrapper">
                     <i data-lucide="mail" class="input-icon"></i>
-                    <input type="email" id="manual-coordinator-email" class="form-input" placeholder="e.g. rao@sandipuniversity.edu.in" required>
+                    <input type="email" id="manual-coordinator-email" class="form-input" placeholder="e.g. rao@sandipuniversity.edu.in" autocomplete="email" required>
                   </div>
                 </div>
 
@@ -142,7 +150,7 @@
                   <label for="manual-coordinator-prn" class="form-label">PRN Number</label>
                   <div class="input-wrapper">
                     <i data-lucide="hash" class="input-icon"></i>
-                    <input type="text" id="manual-coordinator-prn" class="form-input" placeholder="e.g. 2101010101" required>
+                    <input type="text" id="manual-coordinator-prn" class="form-input" placeholder="e.g. 2101010101" autocomplete="username" required>
                   </div>
                 </div>
 
@@ -307,21 +315,21 @@
             <label for="currentPassword" class="form-label">Current Password</label>
             <div class="input-wrapper">
               <i data-lucide="shield-check" class="input-icon"></i>
-              <input type="password" id="currentPassword" class="form-input" placeholder="********" required>
+              <input type="password" id="currentPassword" class="form-input" placeholder="********" autocomplete="current-password" required>
             </div>
           </div>
           <div class="form-group">
             <label for="newPassword" class="form-label">New Password</label>
             <div class="input-wrapper">
               <i data-lucide="key" class="input-icon"></i>
-              <input type="password" id="newPassword" class="form-input" placeholder="********" required>
+              <input type="password" id="newPassword" class="form-input" placeholder="********" autocomplete="new-password" required>
             </div>
           </div>
           <div class="form-group">
             <label for="confirmPassword" class="form-label">Confirm New Password</label>
             <div class="input-wrapper">
               <i data-lucide="check-circle" class="input-icon"></i>
-              <input type="password" id="confirmPassword" class="form-input" placeholder="********" required>
+              <input type="password" id="confirmPassword" class="form-input" placeholder="********" autocomplete="new-password" required>
             </div>
           </div>
           <div class="form-error" id="password-error" style="display: none;"></div>
@@ -337,6 +345,64 @@
 
     <script src="js/dashboard.js"></script>
     <script src="js/hod-dashboard.js"></script>
+    <script src="js/notifications.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        initNotifications();
+      });
+    </script>
+
+    <!-- Notifications Modal -->
+    <div class="modal-backdrop" id="notifications-modal" style="display:none;z-index:1000">
+      <div class="modal-container" style="max-width:500px;width:90%">
+        <div class="modal-content">
+          <button class="modal-close" onclick="closeModal('notifications-modal')">
+            <i data-lucide="x"></i>
+          </button>
+          <div class="modal-header">
+            <div class="modal-icon-wrapper bg-blue-light">
+              <i data-lucide="bell" class="icon-lg text-blue"></i>
+            </div>
+            <h2 class="modal-title">Notifications</h2>
+            <p class="modal-subtitle">View and manage your messages</p>
+          </div>
+          <div id="notifications-list" style="max-height:400px;overflow-y:auto"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Send Notification Modal (HOD to Coordinators) -->
+    <div class="modal-backdrop" id="send-notification-modal" style="display:none;z-index:1001">
+      <div class="modal-container">
+        <div class="modal-content">
+          <button class="modal-close" onclick="closeModal('send-notification-modal')">
+            <i data-lucide="x"></i>
+          </button>
+          <div class="modal-header">
+            <div class="modal-icon-wrapper bg-blue-light">
+              <i data-lucide="send" class="icon-lg text-blue"></i>
+            </div>
+            <h2 class="modal-title">Send Notice</h2>
+            <p class="modal-subtitle">Send notification to coordinators</p>
+          </div>
+          <form class="modal-form" id="send-notification-form">
+            <div class="form-group">
+              <label for="notif-title" class="form-label">Title</label>
+              <input type="text" id="notif-title" name="title" class="form-input" placeholder="Notification title" required>
+            </div>
+            <div class="form-group">
+              <label for="notif-message" class="form-label">Message</label>
+              <textarea id="notif-message" name="message" class="form-input" placeholder="Enter your message here..." rows="4" required></textarea>
+            </div>
+            <div class="form-error" id="notif-error" style="display:none"></div>
+            <button type="submit" class="btn btn-primary btn-block">
+              <span>Send Notice</span>
+              <i data-lucide="send"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">

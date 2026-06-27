@@ -89,6 +89,10 @@ router.patch('/profile', auth, async (req, res) => {
     const { sanitizeRecord } = require('../utils/normalizers');
     const updates = sanitizeRecord(req.body.profileData);
 
+    const name = updates.StudentName;
+    const email = updates.Email;
+    const division = updates.Division;
+
     await db.query(
       `UPDATE users
        SET profile_data = profile_data || $1::jsonb,
@@ -97,12 +101,48 @@ router.patch('/profile', auth, async (req, res) => {
       [JSON.stringify(updates), req.user.id]
     );
 
+    if (name || email || division) {
+      const setParts = [];
+      const params = [];
+      let idx = 1;
+
+      if (name) {
+        setParts.push(`name = $${idx}`);
+        params.push(name);
+        idx++;
+      }
+      if (email) {
+        setParts.push(`email = $${idx}`);
+        params.push(email);
+        idx++;
+      }
+      if (division) {
+        setParts.push(`division = $${idx}`);
+        params.push(division);
+        idx++;
+      }
+
+      setParts.push(`updated_at = CURRENT_TIMESTAMP`);
+      params.push(req.user.id);
+
+      await db.query(
+        `UPDATE users SET ${setParts.join(', ')} WHERE id = $${idx}`,
+        params
+      );
+    }
+
     const result = await db.query(
-      'SELECT profile_data FROM users WHERE id = $1',
+      'SELECT profile_data, name, email, division FROM users WHERE id = $1',
       [req.user.id]
     );
 
-    res.json({ message: 'Profile updated.', profileData: result.rows[0].profile_data });
+    res.json({
+      message: 'Profile updated.',
+      profileData: result.rows[0].profile_data,
+      name: result.rows[0].name,
+      email: result.rows[0].email,
+      division: result.rows[0].division,
+    });
   } catch (error) {
     console.error('Student profile update error:', error);
     res.status(500).json({ error: 'Failed to update profile.' });

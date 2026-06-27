@@ -28,19 +28,6 @@ function profileGetter(profileData) {
   };
 }
 
-function sandipLogoSvg(compact) {
-  const height = compact ? 42 : 52;
-
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 ${height}" class="su-logo-svg" aria-hidden="true">
-    <circle cx="26" cy="${height / 2}" r="22" fill="none" stroke="#111" stroke-width="1.2"/>
-    <circle cx="26" cy="${height / 2}" r="16" fill="#f5e6c8" stroke="#111" stroke-width="0.8"/>
-    <text x="26" y="${height / 2 + 5}" text-anchor="middle" font-size="12" font-weight="700" fill="#8b4513" font-family="Times New Roman,serif">SU</text>
-    <text x="56" y="${height / 2 - 2}" font-size="15" font-weight="700" fill="#b91c1c" font-family="Times New Roman,serif">SANDIP</text>
-    <text x="56" y="${height / 2 + 12}" font-size="10" font-weight="700" fill="#111" font-family="Times New Roman,serif">UNIVERSITY</text>
-    ${compact ? '' : `<text x="56" y="${height / 2 + 24}" font-size="7.5" fill="#111" font-family="Times New Roman,serif">UGC Recognised</text>`}
-  </svg>`;
-}
-
 async function imageToDataUrl(path) {
   const response = await fetch(path);
   if (!response.ok) {
@@ -56,11 +43,28 @@ async function imageToDataUrl(path) {
   });
 }
 
+async function templateImageSource(key) {
+  const path = FAS_TEMPLATE_ASSETS[key];
+  try {
+    return await imageToDataUrl(path);
+  } catch (_) {
+    return path;
+  }
+}
+
+const FAS_TEMPLATE_ASSETS = {
+  logoStrip: 'public/images/pdf-extracted/image-29.jpg',
+  campusPhoto: 'public/images/pdf-extracted/image-30.jpg',
+  detailHeader: 'public/images/pdf-extracted/image-201.jpg',
+};
+
 function buildFasHandbookHtml(student, opts = {}) {
   const studentRecord = student || {};
   const profile = profileGetter(studentRecord.profileData);
   const coordinator = profileGetter(opts.coordinatorProfile || {});
-  const campusSrc = opts.campusSrc || 'public/images/sandip-cover-source.png';
+  const logoSrc = opts.logoSrc || FAS_TEMPLATE_ASSETS.logoStrip;
+  const campusSrc = opts.campusSrc || FAS_TEMPLATE_ASSETS.campusPhoto;
+  const detailHeaderSrc = opts.detailHeaderSrc || FAS_TEMPLATE_ASSETS.detailHeader;
   const dots = '........................................................';
 
   const raw = (value) => String(value || '').trim();
@@ -170,75 +174,70 @@ function buildFasHandbookHtml(student, opts = {}) {
 
   const simpleHeader = `
     <div class="simple-header">
-      <div class="simple-header-logo">${sandipLogoSvg(true)}</div>
+      <img src="${escapePdfHtml(logoSrc)}" class="template-logo-strip" alt="Sandip University">
       <div class="simple-header-title">Sandip University Nashik</div>
     </div>`;
 
   const fasHeader = `
     <div class="fas-header">
-      <div class="fas-header-logo">${sandipLogoSvg(false)}</div>
-      <div class="fas-header-info">
-        <div><strong>Sandip University, Nashik (MS), India</strong></div>
-        <div>At Post Mahiravani, Trimbak Road, Nashik-422213, Maharashtra</div>
-        <div>https://www.sandipuniversity.edu.in</div>
-      </div>
+      <img src="${escapePdfHtml(detailHeaderSrc)}" class="template-detail-header" alt="Sandip University Nashik">
     </div>`;
 
   const css = `
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:"Times New Roman",Times,serif;font-size:11pt;color:#111;background:#fff}
-    .page{width:210mm;min-height:297mm;padding:12mm;position:relative;background:#fff;page-break-after:always;break-after:page}
-    .page:last-child{page-break-after:auto;break-after:auto}
-    .border-box{border:1pt solid #111;min-height:273mm;padding:10mm 12mm;display:flex;flex-direction:column}
-    .simple-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16pt}
-    .simple-header-logo{width:38%}
-    .simple-header-title{flex:1;text-align:right;font-size:18pt;font-weight:700;padding-top:4pt}
-    .su-logo-svg{display:block;width:100%;max-width:180px;height:auto}
-    .cover-titles{text-align:center;margin:12pt 0 14pt}
-    .cover-main{font-size:18pt;font-weight:700;margin-bottom:7pt}
-    .cover-sub{font-size:13pt;font-weight:700}
-    .campus-wrap{text-align:center;margin:14pt 0 20pt}
-    .campus-photo{width:78%;max-height:54mm;object-fit:cover;object-position:center;border:0.5pt solid #aaa}
-    .dotted-row{display:flex;align-items:baseline;margin-bottom:11pt;font-size:12pt;line-height:1.45}
-    .dotted-label{white-space:nowrap;margin-right:5pt}
-    .dotted-value{flex:1;overflow:hidden}
+    .pdf-root{width:216mm;margin:0 auto;background:#fff}
+    .page{width:216mm;height:278.6mm;min-height:278.6mm;padding:25.4mm;position:relative;background:#fff;overflow:hidden;page-break-after:auto;break-after:auto}
+    .page + .page{page-break-before:always;break-before:page}
+    .border-box{border:0.75pt solid #111;height:100%;min-height:0;padding:6mm 5mm;display:flex;flex-direction:column}
+    .simple-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18mm}
+    .template-logo-strip{display:block;width:44.5mm;height:13.3mm;object-fit:contain}
+    .simple-header-title{flex:1;text-align:right;font-size:18pt;font-weight:700;line-height:1;padding-top:1mm}
+    .template-detail-header{width:145mm;height:13.2mm;object-fit:contain}
+    .cover-titles{text-align:center;margin:0 0 9mm}
+    .cover-main{font-size:36pt;font-weight:400;margin-bottom:2mm;line-height:1.05}
+    .cover-sub{font-size:24pt;font-weight:400;line-height:1.1}
+    .campus-wrap{text-align:center;margin:7mm 0 13mm}
+    .campus-photo{width:153mm;height:62.5mm;object-fit:cover;object-position:center}
+    .cover-fields{padding:0 5mm;margin-top:1mm}
+    .dotted-row{display:flex;align-items:baseline;margin-bottom:6.5mm;font-size:15pt;line-height:1.2}
+    .dotted-label{white-space:nowrap;margin-right:4pt}
+    .dotted-value{flex:1;overflow:hidden;border-bottom:0.75pt dotted #111;min-height:16pt;padding-left:2pt}
     .mentor-block{margin-bottom:24pt}
-    .mentor-block-title{text-align:center;font-size:12pt;font-weight:700;margin-bottom:8pt}
+    .mentor-block-title{text-align:center;font-size:13pt;font-weight:700;margin-bottom:8pt}
     .form-table,.grid-table{width:100%;border-collapse:collapse;margin-bottom:8pt;font-size:10.5pt}
-    .form-table td,.grid-table th,.grid-table td{border:1pt solid #111;padding:5pt 7pt;vertical-align:middle}
+    .form-table td,.grid-table th,.grid-table td{border:0.75pt solid #111;padding:5pt 7pt;vertical-align:middle}
     .grid-table th{text-align:center;font-weight:700}
     .label-cell{width:42%;font-weight:700}
     .index-heading{text-align:center;font-size:16pt;font-weight:700;margin:12pt 0 10pt}
-    .fas-header{display:flex;align-items:flex-start;gap:10pt;margin-bottom:10pt;border-bottom:0.5pt solid #999;padding-bottom:8pt}
-    .fas-header-logo{width:34%}
-    .fas-header-info{flex:1;text-align:center;font-size:10pt;line-height:1.45;padding-top:2pt}
-    .fas-main-title{text-align:center;font-size:13pt;font-weight:700;text-decoration:underline;margin:8pt 0 4pt}
+    .fas-header{text-align:center;margin:-8mm 0 11mm}
+    .fas-main-title{text-align:center;font-size:16pt;font-weight:700;text-decoration:underline;margin:0 0 7mm}
     .fas-sub-title{text-align:center;font-size:12pt;font-weight:700;text-decoration:underline;margin-bottom:10pt}
     .section-title{font-size:12pt;font-weight:700;margin:10pt 0 6pt}
     .section-title.underlined{text-decoration:underline}
-    .address-box{border:1pt solid #111;margin-bottom:8pt}
+    .address-box{border:0.75pt solid #111;margin-bottom:8pt}
     .address-cols{display:flex}
-    .address-col{flex:1;border-right:1pt solid #111;padding:6pt 7pt;min-height:55pt}
+    .address-col{flex:1;border-right:0.75pt solid #111;padding:6pt 7pt;min-height:55pt}
     .address-col:last-child{border-right:none}
     .address-col-label{font-weight:700;margin-bottom:26pt}
     .address-pin{font-weight:700;margin-top:8pt}
-    .parents-box{border:1pt solid #111;margin-bottom:8pt;display:flex}
-    .parents-col{flex:1;padding:6pt 7pt;border-right:1pt solid #111;min-height:38pt}
+    .parents-box{border:0.75pt solid #111;margin-bottom:8pt;display:flex}
+    .parents-col{flex:1;padding:6pt 7pt;border-right:0.75pt solid #111;min-height:38pt}
     .parents-col:last-child{border-right:none}
     .parents-line{margin-bottom:8pt}
     .guardian-lines,.hobby-lines{margin:6pt 0 10pt;line-height:2}
-    .guardian-line,.hobby-line{border-bottom:1pt dotted #555;min-height:18pt;margin-bottom:6pt}
+    .guardian-line,.hobby-line{border-bottom:0.75pt dotted #555;min-height:18pt;margin-bottom:6pt}
     .sig-row{display:flex;justify-content:space-between;gap:12pt;margin-top:16pt;font-weight:700}
     .official-section{margin-top:14pt}
     .official-title{font-weight:700;text-decoration:underline;margin-bottom:8pt}
     .official-row{display:flex;justify-content:space-between;gap:12pt;margin-bottom:8pt;font-weight:700}
-    .page-footer{position:absolute;right:12mm;bottom:12mm;font-size:11pt;font-weight:700}
+    .page-footer{position:absolute;right:25.4mm;bottom:16mm;font-size:11pt;font-weight:700}
     .meeting-title{text-align:center;font-size:13pt;font-weight:700;text-decoration:underline;margin:10pt 0 8pt}
     .meeting-table{font-size:9.2pt}
     .meeting-footer{display:flex;justify-content:space-between;gap:16pt;margin-top:28pt;font-weight:700}
-    .vm-wrap{border:1pt solid #111}
+    .vm-wrap{border:0.75pt solid #111}
     .vm-table{width:100%;border-collapse:collapse;font-size:10.5pt}
-    .vm-table td{border:1pt solid #111;padding:6pt 8pt;vertical-align:top}
+    .vm-table td{border:0.75pt solid #111;padding:6pt 8pt;vertical-align:top}
     .vm-header{background:#c5d9a1;text-align:center;font-weight:700;text-transform:uppercase}
     .vm-code{width:12%;text-align:center;font-weight:700}
     .vm-text{width:88%}
@@ -246,6 +245,7 @@ function buildFasHandbookHtml(student, opts = {}) {
   `;
 
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${css}</style></head><body>
+    <div class="pdf-root">
     <div class="page">
       <div class="border-box">
         ${simpleHeader}
@@ -444,6 +444,7 @@ function buildFasHandbookHtml(student, opts = {}) {
         </table>
       </div>
     </div>
+    </div>
   </body></html>`;
 }
 
@@ -467,15 +468,16 @@ window.generateFasPDFFromStudent = async function generateFasPDFFromStudent(stud
   }
 
   try {
-    let campusSrc = 'public/images/sandip-cover-source.png';
-    try {
-      campusSrc = await imageToDataUrl(campusSrc);
-    } catch (_) {
-      // Keep the relative path fallback for local/offline generation.
-    }
+    const [logoSrc, campusSrc, detailHeaderSrc] = await Promise.all([
+      templateImageSource('logoStrip'),
+      templateImageSource('campusPhoto'),
+      templateImageSource('detailHeader'),
+    ]);
 
     const html = buildFasHandbookHtml(studentRecord, {
+      logoSrc,
       campusSrc,
+      detailHeaderSrc,
       coordinatorProfile: options.coordinatorProfile || {},
     });
     const name = rawFilePart(studentRecord.name || 'student');
@@ -486,8 +488,8 @@ window.generateFasPDFFromStudent = async function generateFasPDFFromStudent(stud
       filename: `FAS_${name}_${prn}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, useCORS: true, logging: false },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['css', 'legacy'] },
+      jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' },
+      pagebreak: { mode: ['css'], before: '.page + .page', avoid: ['.page'] },
     }).from(html).save();
 
     if (message) {

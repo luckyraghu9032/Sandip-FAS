@@ -5,14 +5,15 @@ let fasData = null;
 let coordinatorProfile = null;
 
 // â”€â”€ Section navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const SECTIONS = ['handbook', 'index', 'profile', 'academic', 'mentor-info', 'meeting', 'vision', 'fas'];
+const SECTIONS = ['handbook', 'profile', 'academic', 'mentor-info', 'meeting', 'vision', 'fas'];
 
 function showSection(id) {
+  const target = id === 'index' ? 'handbook' : id;
   SECTIONS.forEach(s => {
-    document.getElementById(`section-${s}`).style.display = s === id ? '' : 'none';
+    document.getElementById(`section-${s}`).style.display = s === target ? '' : 'none';
   });
   document.querySelectorAll('.sidebar-link[data-section]').forEach(link => {
-    link.classList.toggle('active', link.dataset.section === id);
+    link.classList.toggle('active', link.dataset.section === target);
   });
 }
 
@@ -55,13 +56,20 @@ function renderHandbook() {
   const prn    = s.prnNumber || '';
   const prog   = pval('Programme', 'program', 'course');
   const school = pval('SchoolName', 'school_name', 'School', 'school');
+  const items = [
+    { sr: 1, title: 'Mentor Information' },
+    { sr: 2, title: 'Mentor-Mentee Policy' },
+    { sr: 3, title: 'Student Details' },
+    { sr: 4, title: 'Meeting Report' },
+    { sr: 5, title: 'Vision-Mission' },
+  ];
   document.getElementById('section-handbook').innerHTML = `
     <div class="handbook-title-page">
       <div class="handbook-logo-row">
         <img src="public/favicon.svg" style="width:3.5rem;height:3.5rem;opacity:0.85" alt="logo">
       </div>
       <div class="handbook-main-title">Mentor-Mentee Handbook</div>
-      <div class="handbook-sub-title">Faculty Advisor System &nbsp;â€”&nbsp; (FAS)</div>
+      <div class="handbook-sub-title">Faculty Advisor System &nbsp;&mdash;&nbsp; (FAS)</div>
       <div class="handbook-divider"></div>
       <div class="handbook-meta">
         ${name  ? `<div><strong>${name}</strong></div>` : ''}
@@ -69,7 +77,18 @@ function renderHandbook() {
         ${prog  ? `<div>${prog}</div>` : ''}
         ${school? `<div>${school}</div>` : ''}
       </div>
+    </div>
+
+    <div class="section-page-title" style="margin-top:2rem">Index</div>
+    <div class="handbook-card">
+      <table class="index-table">
+        <thead><tr><th>Sr. No.</th><th>Particulars</th></tr></thead>
+        <tbody>${items.map(i => `<tr><td>${i.sr}</td><td>${i.title}</td></tr>`).join('')}</tbody>
+      </table>
     </div>`;
+}
+
+function renderIndex() {
 }
 
 function renderIndex() {
@@ -105,47 +124,47 @@ function renderProfile(editMode = false) {
   };
 
   const fields = [
-    { k: 'StudentName',    label: 'Student Name',      val: s.name || '',                                     ro: true },
-    { k: 'SchoolName',     label: 'School Name',       val: g('SchoolName','School'),                         ro: true, co: true },
-    { k: 'DepartmentName', label: 'Department',        val: s.department || g('DepartmentName','department'), ro: true },
-    { k: 'Programme',      label: 'Programme',         val: g('Programme','program'),                         ro: true, co: true },
+    { k: 'StudentName',    label: 'Student Name',      val: s.name || '',                                     ro: false },
+    { k: 'SchoolName',     label: 'School Name',       val: g('SchoolName','School'),                         ro: false },
+    { k: 'DepartmentName', label: 'Department',        val: s.department || g('DepartmentName','department'), ro: false },
+    { k: 'Programme',      label: 'Programme',         val: g('Programme','program'),                         ro: false },
     { k: 'PRN',            label: 'PRN',               val: s.prnNumber || '',                                ro: true },
-    { k: 'Yearofadmission',label: 'Year of Admission', val: g('Yearofadmission','YearOfAdmission'),           ro: true, co: true },
-    { k: 'dob',            label: 'Date of Birth',     val: g('dob','DOB'),                                   ro: true, co: true },
-    { k: 'Email',          label: 'Email',             val: s.email || '',                                    ro: true },
-    { k: 'mobile_number',  label: 'Mobile Number',     val: g('mobile_number','mobile','phone'),              ro: true, co: true },
-    { k: 'Division',       label: 'Division',          val: s.division || '',                                 ro: true },
+    { k: 'Yearofadmission',label: 'Year of Admission', val: g('Yearofadmission','YearOfAdmission'),           ro: false },
+    { k: 'dob',            label: 'Date of Birth',     val: g('dob','DOB'),                                   ro: false },
+    { k: 'Email',          label: 'Email',             val: s.email || '',                                    ro: false },
+    { k: 'mobile_number',  label: 'Mobile Number',     val: g('mobile_number','mobile','phone'),              ro: false },
+    { k: 'Division',       label: 'Division',          val: s.division || '',                                 ro: false },
   ];
 
 const addressFields = [
-    { k: 'PresentAddress',  label: 'Present Address',  val: g('PresentAddress','presentaddress'), ro: true, co: true },
-    { k: 'PresentCity',     label: 'City',             val: g('PresentCity','presentcity'), ro: true, co: true },
-    { k: 'PresentState',    label: 'State',            val: g('PresentState','presentstate'), ro: true, co: true },
-    { k: 'PresentPincode',  label: 'Pincode',          val: g('PresentPincode','presentpincode'), ro: true, co: true },
-    { k: 'PostalAddress',   label: 'Postal Address',   val: g('PostalAddress','postaladdress'), ro: true, co: true },
+    { k: 'PresentAddress',  label: 'Present Address',  val: g('PresentAddress','presentaddress'), ro: false },
+    { k: 'PresentCity',     label: 'City',             val: g('PresentCity','presentcity'), ro: false },
+    { k: 'PresentState',    label: 'State',            val: g('PresentState','presentstate'), ro: false },
+    { k: 'PresentPincode',  label: 'Pincode',          val: g('PresentPincode','presentpincode'), ro: false },
+    { k: 'PostalAddress',   label: 'Postal Address',   val: g('PostalAddress','postaladdress'), ro: false },
   ];
 
   const permanentAddressFields = [
-    { k: 'PermanentAddress', label: 'Permanent Address', val: g('PermanentAddress','permanentaddress'), ro: true, co: true },
-    { k: 'PermanentCity',    label: 'City',              val: g('PermanentCity','permanentcity'), ro: true, co: true },
-    { k: 'PermanentState',   label: 'State',             val: g('PermanentState','permanentstate'), ro: true, co: true },
-    { k: 'PermanentPincode', label: 'Pincode',           val: g('PermanentPincode','permanentpincode'), ro: true, co: true },
+    { k: 'PermanentAddress', label: 'Permanent Address', val: g('PermanentAddress','permanentaddress'), ro: false },
+    { k: 'PermanentCity',    label: 'City',              val: g('PermanentCity','permanentcity'), ro: false },
+    { k: 'PermanentState',   label: 'State',             val: g('PermanentState','permanentstate'), ro: false },
+    { k: 'PermanentPincode', label: 'Pincode',           val: g('PermanentPincode','permanentpincode'), ro: false },
   ];
 
   const guardianFields = [
-    { k: 'LocalGuardianName',    label: 'Local Guardian Name',    val: g('LocalGuardianName','GuardianName','guardianname'), ro: true, co: true },
-    { k: 'LocalGuardianAddress', label: 'Local Guardian Address', val: g('LocalGuardianAddress','GuardianAddress','guardianaddress'), ro: true, co: true },
-    { k: 'LocalGuardianMobile',  label: 'Local Guardian Mobile',    val: g('LocalGuardianMobile','GuardianMobile','guardianmobile'), ro: true, co: true },
+    { k: 'LocalGuardianName',    label: 'Local Guardian Name',    val: g('LocalGuardianName','GuardianName','guardianname'), ro: false },
+    { k: 'LocalGuardianAddress', label: 'Local Guardian Address', val: g('LocalGuardianAddress','GuardianAddress','guardianaddress'), ro: false },
+    { k: 'LocalGuardianMobile',  label: 'Local Guardian Mobile',    val: g('LocalGuardianMobile','GuardianMobile','guardianmobile'), ro: false },
   ];
 
   const familyFields = [
-    { k: 'FatherName',    label: "Father's Name",          val: g('FatherName','father_name'),        ro: true, co: true },
-    { k: 'FatherMobile1', label: "Father's Mobile 1",      val: g('FatherMobile1','FatherMobileNumber1','fathermobile1','father_mobile'), ro: true, co: true },
-    { k: 'FatherMobile2', label: "Father's Mobile 2",      val: g('FatherMobile2','FatherMobileNumber2','fathermobile2','father_mobile2'), ro: true, co: true },
-    { k: 'MotherName',    label: "Mother's Name",          val: g('MotherName','mother_name'),        ro: true, co: true },
-    { k: 'MotherMobile1', label: "Mother's Mobile 1",      val: g('MotherMobile1','MotherMobileNumber1','mothermobile1','mother_mobile'), ro: true, co: true },
-    { k: 'MotherMobile2', label: "Mother's Mobile 2",      val: g('MotherMobile2','MotherMobileNumber2','mothermobile2','mother_mobile2'), ro: true, co: true },
-    { k: 'HostelerDayScholar', label: 'Hosteler / Day Scholar', val: g('HostelerDayScholar','hosteler'), ro: true, co: true },
+    { k: 'FatherName',    label: "Father's Name",          val: g('FatherName','father_name'),        ro: false },
+    { k: 'FatherMobile1', label: "Father's Mobile 1",      val: g('FatherMobile1','FatherMobileNumber1','fathermobile1','father_mobile'), ro: false },
+    { k: 'FatherMobile2', label: "Father's Mobile 2",      val: g('FatherMobile2','FatherMobileNumber2','fathermobile2','father_mobile2'), ro: false },
+    { k: 'MotherName',    label: "Mother's Name",          val: g('MotherName','mother_name'),        ro: false },
+    { k: 'MotherMobile1', label: "Mother's Mobile 1",      val: g('MotherMobile1','MotherMobileNumber1','mothermobile1','mother_mobile'), ro: false },
+    { k: 'MotherMobile2', label: "Mother's Mobile 2",      val: g('MotherMobile2','MotherMobileNumber2','mothermobile2','mother_mobile2'), ro: false },
+    { k: 'HostelerDayScholar', label: 'Hosteler / Day Scholar', val: g('HostelerDayScholar','hosteler'), ro: false },
   ];
 
   const familyTableRows = [
@@ -157,15 +176,15 @@ const addressFields = [
   ];
 
   const educationFields = [
-    { k: 'SSC_Board',       label: '10th SSC â€” Board/College',      val: g('SSC_Board','SSCBoard','ssc_board'), ro: true, co: true },
-    { k: 'SSC_Year',        label: '10th SSC â€” Year',               val: g('SSC_Year','SSCYear','ssc_year'), ro: true, co: true },
-    { k: 'SSC_Grade',       label: '10th SSC â€” Grade/Percentage',   val: g('SSC_Grade','SSCPercentage','ssc_grade','ssc_percentage'), ro: true, co: true },
-    { k: 'HSSC_Board',      label: '12th HSSC â€” Board/College',     val: g('HSSC_Board','HSCBoard','hssc_board'), ro: true, co: true },
-    { k: 'HSSC_Year',       label: '12th HSSC â€” Year',              val: g('HSSC_Year','HSCYear','hssc_year'), ro: true, co: true },
-    { k: 'HSSC_Grade',      label: '12th HSSC â€” Grade/Percentage',  val: g('HSSC_Grade','HSCPercentage','hssc_grade','hssc_percentage'), ro: true, co: true },
-    { k: 'Diploma_Board',   label: 'Diploma â€” Board/College',       val: g('Diploma_Board','DiplomaCollege','diploma_board'), ro: true, co: true },
-    { k: 'Diploma_Year',    label: 'Diploma â€” Year',                val: g('Diploma_Year','DiplomaYear','diploma_year'), ro: true, co: true },
-    { k: 'Diploma_Grade',   label: 'Diploma â€” Grade/Percentage',   val: g('Diploma_Grade','DiplomaPercentage','diploma_grade','diploma_percentage'), ro: true, co: true },
+    { k: 'SSC_Board',       label: '10th SSC &mdash; Board/College',      val: g('SSC_Board','SSCBoard','ssc_board'), ro: false },
+    { k: 'SSC_Year',        label: '10th SSC &mdash; Year',               val: g('SSC_Year','SSCYear','ssc_year'), ro: false },
+    { k: 'SSC_Grade',       label: '10th SSC &mdash; Grade/Percentage',   val: g('SSC_Grade','SSCPercentage','ssc_grade','ssc_percentage'), ro: false },
+    { k: 'HSSC_Board',      label: '12th HSSC &mdash; Board/College',     val: g('HSSC_Board','HSCBoard','hssc_board'), ro: false },
+    { k: 'HSSC_Year',       label: '12th HSSC &mdash; Year',              val: g('HSSC_Year','HSCYear','hssc_year'), ro: false },
+    { k: 'HSSC_Grade',      label: '12th HSSC &mdash; Grade/Percentage',  val: g('HSSC_Grade','HSCPercentage','hssc_grade','hssc_percentage'), ro: false },
+    { k: 'Diploma_Board',   label: 'Diploma &mdash; Board/College',       val: g('Diploma_Board','DiplomaCollege','diploma_board'), ro: false },
+    { k: 'Diploma_Year',    label: 'Diploma &mdash; Year',                val: g('Diploma_Year','DiplomaYear','diploma_year'), ro: false },
+    { k: 'Diploma_Grade',   label: 'Diploma &mdash; Grade/Percentage',   val: g('Diploma_Grade','DiplomaPercentage','diploma_grade','diploma_percentage'), ro: false },
   ];
 
   function viewField(f) {
@@ -198,10 +217,11 @@ const addressFields = [
       ak: `Activity_Name_${i + 1}`,
       ck: `Activity_Achievement_${i + 1}`,
     }));
-    // Activities are coordinator-uploaded, always read-only for students
-    const cell = (k, placeholder) => `<span class="${g(k) ? '' : 'fas-field-empty'}">${g(k) || '...............'}</span>`;
+    const cell = (k, placeholder) => isEdit
+      ? `<input name="${k}" value="${escStr(g(k))}" class="edit-input" placeholder="${placeholder}" style="min-width:7rem">`
+      : `<span class="${g(k) ? '' : 'fas-field-empty'}">${g(k) || '...............'}</span>`;
     return `<div class="handbook-card" style="margin-top:1rem">
-      <div class="handbook-card-title">Participation in Co-curricular and Extracurricular Activities <span style="font-weight:400;font-size:0.78rem;color:var(--text-muted);margin-left:0.5rem">(Coordinator only)</span></div>
+      <div class="handbook-card-title">Participation in Co-curricular and Extracurricular Activities</div>
       <div class="table-shell">
         <table class="allocation-table">
           <thead>
@@ -233,10 +253,11 @@ const addressFields = [
   }
 
   function renderFamilyTable(rows, isEdit) {
-    // Family details are coordinator-uploaded, always read-only for students
-    const cell = (k, placeholder) => `<span class="${g(k) ? '' : 'fas-field-empty'}">${g(k) || '...............'}</span>`;
+    const cell = (k, placeholder) => isEdit
+      ? `<input name="${k}" value="${escStr(g(k))}" class="edit-input" placeholder="${placeholder}" style="min-width:7rem">`
+      : `<span class="${g(k) ? '' : 'fas-field-empty'}">${g(k) || '...............'}</span>`;
     return `<div class="handbook-card" style="margin-top:1rem">
-      <div class="handbook-card-title">Family Details <span style="font-weight:400;font-size:0.78rem;color:var(--text-muted);margin-left:0.5rem">(Coordinator only)</span></div>
+      <div class="handbook-card-title">Family Details</div>
       <div class="table-shell">
         <table class="allocation-table">
           <thead>
@@ -273,7 +294,7 @@ const addressFields = [
         : `<span class="${field.val ? '' : 'fas-field-empty'}">${field.val || '...............'}</span>`;
     };
     return `<div class="handbook-card" style="margin-top:1rem">
-      <div class="handbook-card-title">Educational Details <span style="font-weight:400;font-size:0.78rem;color:var(--text-muted);margin-left:0.5rem">(Editable by coordinator)</span></div>
+      <div class="handbook-card-title">Educational Details</div>
       <div class="table-shell">
         <table class="allocation-table">
           <thead>
@@ -321,14 +342,14 @@ const addressFields = [
     <div id="profile-save-msg"></div>
     <form id="profile-edit-form" onsubmit="return false">
       ${firstCard}
-      ${renderCard('Present Address Details', addressFields, true)}
-      ${renderCard('Permanent Address Details', permanentAddressFields, true)}
-      ${renderCard('Parent Contact Details', familyFields, true)}
-      ${renderCard('Local Guardian', guardianFields, true)}
-      ${renderFamilyTable(familyTableRows, editMode)}
-      ${renderEducation(educationFields, editMode)}
-      ${renderHobbies(editMode)}
-      ${renderActivities(editMode)}
+      ${renderCard('Present Address Details', addressFields)}
+       ${renderCard('Permanent Address Details', permanentAddressFields)}
+       ${renderCard('Parent Contact Details', familyFields)}
+       ${renderCard('Local Guardian', guardianFields)}
+       ${renderFamilyTable(familyTableRows, editMode)}
+       ${renderEducation(educationFields, editMode)}
+       ${renderHobbies(editMode)}
+       ${renderActivities(editMode)}
     </form>`;
 }
 
@@ -377,6 +398,9 @@ window.saveProfile = async function() {
     }
 
     studentData.profileData = { ...studentData.profileData, ...data.profileData };
+    if (data.name) studentData.name = data.name;
+    if (data.email) studentData.email = data.email;
+    if (data.division) studentData.division = data.division;
     profileEditMode = false;
     renderProfile(false);
 
@@ -739,7 +763,6 @@ function renderVision() {
 
 function renderAll() {
   renderHandbook();
-  renderIndex();
   renderProfile();
   renderAcademic();
   renderMentorInfo();
