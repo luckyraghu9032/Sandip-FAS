@@ -1,6 +1,6 @@
 // Shared Dashboard Logic
 
-const API_BASE = window.location.origin === 'http://localhost:5001' ? '' : 'http://localhost:5001';
+const API_BASE = window.location.origin === 'http://localhost:5001' ? 'http://localhost:5001' : 'https://sandip-fas-backend.vercel.app';
 
 function getInitials(name) {
   if (!name) return '??';
@@ -128,7 +128,7 @@ function toggleSidebar(show) {
   const sidebar = document.querySelector('.sidebar');
   const overlay = document.querySelector('.sidebar-overlay');
   if (!sidebar || !overlay) return;
-  
+
   if (show === undefined) {
     sidebar.classList.toggle('active');
     overlay.classList.toggle('active');

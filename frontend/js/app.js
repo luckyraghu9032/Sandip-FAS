@@ -1,7 +1,7 @@
 // Initialize Lucide Icons
 lucide.createIcons();
 
-const API_BASE = window.location.origin === 'http://localhost:5001' ? '' : 'http://localhost:5001';
+const API_BASE = window.location.origin === 'http://localhost:5001' ? 'http://localhost:5001' : 'https://sandip-fas-backend.vercel.app';
 
 // Mobile Menu Toggle
 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
