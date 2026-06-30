@@ -139,11 +139,11 @@ loginForm.addEventListener('submit', async (e) => {
       localStorage.setItem('user', JSON.stringify(data.user));
 
       if (currentRole === 'HOD Portal') {
-        window.location.href = '/hod-dashboard.html';
+        window.location.href = 'hod-dashboard.html';
       } else if (currentRole === 'Coordinator Portal') {
-        window.location.href = '/coordinator-dashboard.html';
+        window.location.href = 'coordinator-dashboard.html';
       } else {
-        window.location.href = '/student-dashboard.html';
+        window.location.href = 'student-dashboard.html';
       }
     } else {
       loginError.textContent = data.error || data.message || 'Login failed. Please check your credentials.';

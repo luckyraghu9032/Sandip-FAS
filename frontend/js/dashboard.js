@@ -13,7 +13,7 @@ function checkAuth(role) {
   const user = JSON.parse(localStorage.getItem('user'));
 
   if (!token || !user || user.role !== role) {
-    window.location.href = '/';
+    window.location.href = 'index.html';
     return null;
   }
   return user;
@@ -23,7 +23,7 @@ function checkAuth(role) {
 function logout() {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
-  window.location.href = '/';
+  window.location.href = 'index.html';
 }
 
 function escapeHtml(value) {
