@@ -1,7 +1,8 @@
 // Initialize Lucide Icons
 lucide.createIcons();
 
-const API_BASE = window.location.origin === 'http://localhost:5001' ? 'http://localhost:5001' : 'https://sandip-fas-backend.vercel.app';
+// Replace the Vercel URL with your new Render URL
+const API_BASE = window.location.origin === 'http://localhost:5001' ? 'http://localhost:5001' : 'https://sandip-fas-backend.onrender.com';
 
 // Mobile Menu Toggle
 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -37,18 +38,18 @@ const portalConfig = {
   'Student Portal': { icon: 'graduation-cap', colorClass: 'bg-violet-light', textColor: 'text-violet' }
 };
 
-window.openLoginModal = function(role) {
+window.openLoginModal = function (role) {
   currentRole = role;
   const config = portalConfig[role];
-  
+
   // Set Title and Icon
   modalTitle.textContent = `${role} Login`;
   modalIcon.setAttribute('data-lucide', config.icon);
-  
+
   // Reset classes
   modalIconBg.className = `modal-icon-wrapper ${config.colorClass}`;
   modalIcon.className = `icon-lg ${config.textColor}`;
-  
+
   // Re-initialize icon for the new data-lucide attribute
   lucide.createIcons();
 
@@ -82,7 +83,7 @@ window.openLoginModal = function(role) {
   modal.style.display = 'flex';
 };
 
-window.closeLoginModal = function() {
+window.closeLoginModal = function () {
   modal.style.display = 'none';
   currentRole = '';
 };
@@ -100,7 +101,7 @@ document.getElementById('toggle-password').addEventListener('click', () => {
 // Form Submission
 loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  
+
   loginError.style.display = 'none';
   const originalBtnContent = loginBtn.innerHTML;
   loginBtn.innerHTML = `<span>Loading...</span>`;
@@ -136,7 +137,7 @@ loginForm.addEventListener('submit', async (e) => {
       // Store token and redirect
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      
+
       if (currentRole === 'HOD Portal') {
         window.location.href = '/hod-dashboard.html';
       } else if (currentRole === 'Coordinator Portal') {
