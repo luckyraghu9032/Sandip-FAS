@@ -58,6 +58,10 @@
           <i data-lucide="download" class="icon-sm"></i>
           FAS
         </a>
+        <a href="#" class="sidebar-link" data-tab="academic-year">
+          <i data-lucide="calendar" class="icon-sm"></i>
+          Academic Year
+        </a>
         <a href="#" class="sidebar-link" data-tab="coordinator-profile">
           <i data-lucide="user-cog" class="icon-sm"></i>
           My Profile
@@ -284,7 +288,55 @@
         </div>
       </div>
 
-            <!-- ── Coordinator Profile Tab ── -->
+            <!-- ── Academic Year Tab ── -->
+      <div id="tab-academic-year" style="display:none">
+        <div class="card">
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">Academic Settings</p>
+              <h2 class="panel-title">For Official Use (Academic Years)</h2>
+            </div>
+          </div>
+          <p class="text-muted mb-4">Set the academic years for all students in your division. This information will appear in the "For Official Use (To be Filled by Mentor)" section of their FAS forms.</p>
+          <form onsubmit="return false" id="academic-year-form">
+            <div class="form-group" style="max-width:20rem">
+              <label for="official-fe-year" class="form-label">Admitted in Class: FE</label>
+              <div class="input-wrapper">
+                <i data-lucide="calendar" class="input-icon"></i>
+                <input type="text" id="official-fe-year" class="form-input" placeholder="e.g. 2023-24">
+              </div>
+            </div>
+            <div class="form-group" style="max-width:20rem">
+              <label for="official-se-year" class="form-label">Admitted in Class: SE/DSE</label>
+              <div class="input-wrapper">
+                <i data-lucide="calendar" class="input-icon"></i>
+                <input type="text" id="official-se-year" class="form-input" placeholder="e.g. 2024-25">
+              </div>
+            </div>
+            <div class="form-group" style="max-width:20rem">
+              <label for="official-te-year" class="form-label">Admitted in Class: TE</label>
+              <div class="input-wrapper">
+                <i data-lucide="calendar" class="input-icon"></i>
+                <input type="text" id="official-te-year" class="form-input" placeholder="e.g. 2025-26">
+              </div>
+            </div>
+            <div class="form-group" style="max-width:20rem">
+              <label for="official-be-year" class="form-label">Admitted in Class: BE</label>
+              <div class="input-wrapper">
+                <i data-lucide="calendar" class="input-icon"></i>
+                <input type="text" id="official-be-year" class="form-input" placeholder="e.g. 2026-27">
+              </div>
+            </div>
+            <div class="form-error" id="ay-error" style="display:none"></div>
+            <div class="form-success" id="ay-success" style="display:none"></div>
+            <button type="button" class="btn btn-primary" id="save-ay-btn" onclick="saveCoordinatorProfile(true)">
+              <i data-lucide="save"></i> Save Academic Years
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ── Coordinator Profile Tab ── -->
       <div id="tab-coordinator-profile" style="display:none">
         <div class="card">
           <div class="panel-header">
@@ -451,13 +503,13 @@
       document.getElementById('overview-welcome-name').textContent = `Welcome, ${user.name}`;
       lucide.createIcons();
       // Hide all tabs except overview on load
-      ['students','handbook','meetings','fas','coordinator-profile'].forEach(t => { document.getElementById(`tab-${t}`).style.display = 'none'; });
+      ['students','handbook','meetings','fas','academic-year','coordinator-profile'].forEach(t => { document.getElementById(`tab-${t}`).style.display = 'none'; });
       initCoordinatorDashboard();
     }
 
     // ── Tab switching ─────────────────────────────────────────────────────────
-    const TAB_TITLES = { overview: 'Overview', students: 'Students', handbook: 'Handbook', meetings: 'Meeting Reports', fas: 'FAS Download', 'coordinator-profile': 'My Profile' };
-    const ALL_TABS = ['overview','students','handbook','meetings','fas','coordinator-profile'];
+    const TAB_TITLES = { overview: 'Overview', students: 'Students', handbook: 'Handbook', meetings: 'Meeting Reports', fas: 'FAS Download', 'academic-year': 'Academic Year', 'coordinator-profile': 'My Profile' };
+    const ALL_TABS = ['overview','students','handbook','meetings','fas','academic-year','coordinator-profile'];
 
     function switchTab(tab) {
       document.querySelectorAll('.sidebar-link[data-tab]').forEach(l => l.classList.toggle('active', l.dataset.tab === tab));

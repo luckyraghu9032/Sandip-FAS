@@ -330,7 +330,7 @@ const addressFields = [
     ? `<div class="handbook-card"><div class="field-grid">${fields.map(editField).join('')}</div></div>`
     : `<div class="handbook-card"><div class="field-grid">${fields.map(viewField).join('')}</div></div>`;
 
-  const editBtn = `<button class="btn btn-dark" onclick="toggleProfileEdit()"><span>âœï¸ Edit Details</span></button>`;
+  const editBtn = `<button class="btn btn-dark" onclick="toggleProfileEdit()"><span>✏️ Edit your details</span></button>`;
   const saveBtn = `<button class="btn btn-primary" onclick="saveProfile()"><span>Save Changes</span></button>
                    <button class="btn btn-dark" onclick="toggleProfileEdit()" style="margin-left:0.5rem"><span>Cancel</span></button>`;
 
@@ -460,9 +460,8 @@ function renderAcademic(editMode = false) {
     </div>`;
   };
 
-  const editBtn = `<button class="btn btn-dark" onclick="toggleAcademicEdit()"><span>âœï¸ Edit</span></button>`;
-  const saveBtn = `<button class="btn btn-primary" onclick="saveAcademic()"><span>Save Changes</span></button>
-                   <button class="btn btn-dark" onclick="toggleAcademicEdit()" style="margin-left:0.5rem"><span>Cancel</span></button>`;
+  const editBtn = '';
+  const saveBtn = '';
 
   document.getElementById('section-academic').innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem">
@@ -492,15 +491,17 @@ function renderAcademic(editMode = false) {
         <div class="field-grid">
           <div class="fas-field">
             <span class="fas-field-label">Date</span>
-            ${editMode
-              ? `<input name="Academic_Date" value="${escStr(g('Academic_Date'))}" class="edit-input" placeholder="DD/MM/YYYY">`
-              : `<span class="fas-field-value ${g('Academic_Date') ? '' : 'fas-field-empty'}">${g('Academic_Date') || '................................'}</span>`}
+            <span class="fas-field-value ${g('Academic_Date') ? '' : 'fas-field-empty'}">${g('Academic_Date') || '................................'}</span>
           </div>
           <div class="fas-field">
-            <span class="fas-field-label">Mentee Name &amp; Signature</span>
-            ${editMode
-              ? `<input name="Academic_Signature" value="${escStr(g('Academic_Signature'))}" class="edit-input" placeholder="Name / Signature">`
-              : `<span class="fas-field-value ${g('Academic_Signature') ? '' : 'fas-field-empty'}">${g('Academic_Signature') || '................................'}</span>`}
+            <span class="fas-field-label">Academic Year</span>
+            ${(coordinatorProfile?.AcademicYear || g('AcademicYear', 'academic_year'))
+              ? `<span class="fas-field-value">${coordinatorProfile?.AcademicYear || g('AcademicYear', 'academic_year')}</span>`
+              : `<span class="fas-field-value fas-field-empty">................................</span>`}
+          </div>
+          <div class="fas-field">
+            <span class="fas-field-label">Mentor Name &amp; Signature</span>
+            <span class="fas-field-value ${(coordinatorProfile?.MentorName || coordinatorProfile?.mentor_name) ? '' : 'fas-field-empty'}">${(coordinatorProfile?.MentorName || coordinatorProfile?.mentor_name) || '................................'}</span>
           </div>
         </div>
       </div>
@@ -624,7 +625,7 @@ function renderMeeting(editMode = false) {
         : `<span class="fas-field-empty" style="font-size:0.82rem">................................</span>`;
   };
 
-  const editBtn = `<button class="btn btn-dark" onclick="toggleMeetingEdit()"><span>âœï¸ Edit</span></button>`;
+  const editBtn = `<button class="btn btn-dark" onclick="toggleMeetingEdit()"><span>✏️ Report here</span></button>`;
   const saveBtn = `<button class="btn btn-primary" onclick="saveMeeting()"><span>Save Changes</span></button>
                    <button class="btn btn-dark" onclick="toggleMeetingEdit()" style="margin-left:0.5rem"><span>Cancel</span></button>`;
 

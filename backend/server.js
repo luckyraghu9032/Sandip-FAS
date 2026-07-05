@@ -30,6 +30,7 @@ app.get('/api/health', (req, res) => {
 // Serve static frontend files
 app.use('/css', express.static(path.join(__dirname, '../frontend/css')));
 app.use(express.static(path.join(__dirname, '../frontend')));
+app.use('/public', express.static(path.join(__dirname, '../public')));
 
 app.use((err, req, res, next) => {
   const isJsonParseError = err instanceof SyntaxError && err.type === 'entity.parse.failed';

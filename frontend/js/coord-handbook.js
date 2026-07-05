@@ -195,10 +195,6 @@ function renderCoordAcademic(s, editMode = false) {
     { label: 'Admitted in Class: BE',    k: 'OfficialUse_BE_Year' },
   ];
 
-  const editBtn = `<button class="btn btn-dark" onclick="toggleCoordAcademicEdit(${s.id})"><span>✏️ Fill Official Use</span></button>`;
-  const saveBtn = `<button class="btn btn-primary" onclick="saveCoordAcademic(${s.id})"><span>Save</span></button>
-                   <button class="btn btn-dark" onclick="loadCoordHandbook(${s.id})" style="margin-left:0.5rem"><span>Cancel</span></button>`;
-
   document.getElementById('ch-section-academic').innerHTML = `
     <div class="section-page-title">Academic Progress</div>
     <div class="handbook-card">
@@ -210,26 +206,24 @@ function renderCoordAcademic(s, editMode = false) {
     <div class="handbook-card" style="margin-top:1rem">
       <div class="field-grid">
         ${chField('Date', g('Academic_Date'))}
-        ${chField('Mentee Name & Signature', g('Academic_Signature'))}
+        ${chField('Academic Year', (typeof coordinatorProfile !== 'undefined' && coordinatorProfile.AcademicYear) || g('AcademicYear', 'academic_year'))}
+        ${chField('Mentor Name & Signature', (typeof coordinatorProfile !== 'undefined' && (coordinatorProfile.MentorName || coordinatorProfile.mentor_name)) || '')}
       </div>
     </div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin:1.25rem 0 0.5rem;flex-wrap:wrap;gap:0.5rem">
-      <div style="font-weight:700;color:var(--blue-600);font-size:0.95rem">For Official Use <span style="font-weight:400;font-size:0.78rem;color:var(--text-muted)">(To be Filled by Mentor)</span></div>
-      <div id="coord-academic-save-msg" style="flex:1;text-align:right"></div>
-      <div>${editMode ? saveBtn : editBtn}</div>
+    <div style="margin:1.25rem 0 0.5rem">
+      <div style="font-weight:700;color:var(--blue-600);font-size:0.95rem">For Official Use <span style="font-weight:400;font-size:0.78rem;color:var(--text-muted)">(Filled by Mentor — read only)</span></div>
     </div>
-    <form id="coord-academic-form" onsubmit="return false" data-student-id="${s.id}">
-      <div class="handbook-card" style="border:2px solid rgba(37,99,235,0.18);background:rgba(239,246,255,0.6)">
-        <div class="field-grid">
-          ${officialClasses.map(c => `<div class="fas-field">
+    <div class="handbook-card" style="border:2px solid rgba(37,99,235,0.18);background:rgba(239,246,255,0.6)">
+      <div class="field-grid">
+        ${officialClasses.map(c => {
+          const val = (typeof coordinatorProfile !== 'undefined' && coordinatorProfile[c.k]) || '';
+          return `<div class="fas-field">
             <span class="fas-field-label">${c.label}</span>
-            ${editMode
-              ? `<div style="display:flex;align-items:center;gap:0.5rem"><span style="color:var(--text-muted);font-size:0.88rem">Academic Year:</span><input name="${c.k}" value="${g(c.k)}" class="edit-input" placeholder="e.g. 2023-24" style="max-width:10rem"></div>`
-              : `<span class="fas-field-value ${g(c.k) ? '' : 'fas-field-empty'}">Academic Year: ${g(c.k) || '................................'}</span>`}
-          </div>`).join('')}
-        </div>
+            <span class="fas-field-value ${val ? '' : 'fas-field-empty'}">Academic Year: ${val || '................................'}</span>
+          </div>`;
+        }).join('')}
       </div>
-    </form>`;
+    </div>`;
 }
 
 window.toggleCoordAcademicEdit = async function(studentId) {
@@ -267,19 +261,31 @@ window.saveCoordAcademic = async function(studentId) {
 function renderCoordMentorInfo(s) {
   const pd = s.profileData || {};
   const g = (...keys) => chG(pd, ...keys);
-  const acadYear = g('AcademicYear','academic_year');
+  
+  const cg = (...keys) => {
+    if (typeof coordinatorProfile !== 'undefined') {
+      for (const k of keys) {
+        if (coordinatorProfile[k] && String(coordinatorProfile[k]).trim() !== '') {
+          return String(coordinatorProfile[k]).trim();
+        }
+      }
+    }
+    return g(...keys);
+  };
+
+  const acadYear = cg('AcademicYear','academic_year');
   document.getElementById('ch-section-mentor-info').innerHTML = `
     <div class="section-page-title">Mentor Information</div>
     ${acadYear ? `<div class="handbook-badge" style="margin-bottom:1rem">Academic Year: ${acadYear}</div>` : ''}
     <div class="handbook-card">
       <div class="field-grid">
-        ${chField('Mentor Name', g('MentorName','mentor_name','Mentor'))}
-        ${chField('School', g('MentorSchool','mentor_school','SchoolName'))}
-        ${chField('Department', g('MentorDepartment','mentor_department'))}
-        ${chField('Contact Details', g('MentorContact','mentor_contact'))}
-        ${chField('Email ID', g('MentorEmail','mentor_email'))}
-        ${chField('No. of Mentees Allocated', g('MenteeCount','mentee_count'))}
-        ${chField('Class of Mentee', g('MenteeClass','mentee_class'))}
+        ${chField('Mentor Name', cg('MentorName','mentor_name','Mentor'))}
+        ${chField('School', cg('MentorSchool','mentor_school','SchoolName'))}
+        ${chField('Department', cg('MentorDepartment','mentor_department'))}
+        ${chField('Contact Details', cg('MentorContact','mentor_contact'))}
+        ${chField('Email ID', cg('MentorEmail','mentor_email'))}
+        ${chField('No. of Mentees Allocated', cg('MenteeCount','mentee_count'))}
+        ${chField('Class of Mentee', cg('MenteeClass','mentee_class'))}
       </div>
     </div>`;
 }

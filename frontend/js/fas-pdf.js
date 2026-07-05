@@ -1,4 +1,4 @@
-﻿// Shared FAS handbook PDF generation - Sandip University printable layout
+// Shared FAS handbook PDF generation - Sandip University printable layout
 
 function escapePdfHtml(value) {
   return String(value ?? '')
@@ -78,7 +78,7 @@ function buildFasHandbookHtml(student, opts = {}) {
   const department = raw(studentRecord.department) || profileValue('DepartmentName', 'Department', 'department');
   const school = profileValue('SchoolName', 'School', 'school_name');
   const programme = profileValue('Programme', 'Program', 'program', 'Course');
-  const academicYear = profileValue('AcademicYear', 'academic_year');
+  const academicYear = coordinatorValue('AcademicYear', 'academic_year') || profileValue('AcademicYear', 'academic_year');
 
   const dotted = (label, value) => `
     <div class="dotted-row">
@@ -381,16 +381,17 @@ function buildFasHandbookHtml(student, opts = {}) {
         <thead><tr><th>Semester</th><th>CGPA</th><th>Grade</th><th>Remarks</th></tr></thead>
         <tbody>${semesterRows}</tbody>
       </table>
+      <div style="margin-top:16pt;font-weight:700">Academic Year: ${valueOrDots(academicYear)}</div>
       <div class="sig-row">
         <div>Date: ${valueOrDots(profileValue('Academic_Date', 'Date'))}</div>
-        <div>Mentee Name and Signature: ${valueOrDots(profileValue('Academic_Signature', 'StudentSignatureName'))}</div>
+        <div>Mentor Name and Signature: ${valueOrDots(coordinator('MentorName', 'mentor_name'))}</div>
       </div>
       <div class="official-section">
         <div class="official-title">For Official Use (To be Filled by Mentor):</div>
-        <div class="official-row"><span>Admitted in Class: FE</span><span>Academic Year: ${valueOrDots(profileValue('OfficialUse_FE_Year'))}</span></div>
-        <div class="official-row"><span>Admitted in Class: SE/DSE</span><span>Academic Year: ${valueOrDots(profileValue('OfficialUse_SE_Year'))}</span></div>
-        <div class="official-row"><span>Admitted in Class: TE</span><span>Academic Year: ${valueOrDots(profileValue('OfficialUse_TE_Year'))}</span></div>
-        <div class="official-row"><span>Admitted in Class: BE</span><span>Academic Year: ${valueOrDots(profileValue('OfficialUse_BE_Year'))}</span></div>
+        <div class="official-row"><span>Admitted in Class: FE</span><span>Academic Year: ${valueOrDots(coordinator('OfficialUse_FE_Year'))}</span></div>
+        <div class="official-row"><span>Admitted in Class: SE/DSE</span><span>Academic Year: ${valueOrDots(coordinator('OfficialUse_SE_Year'))}</span></div>
+        <div class="official-row"><span>Admitted in Class: TE</span><span>Academic Year: ${valueOrDots(coordinator('OfficialUse_TE_Year'))}</span></div>
+        <div class="official-row"><span>Admitted in Class: BE</span><span>Academic Year: ${valueOrDots(coordinator('OfficialUse_BE_Year'))}</span></div>
       </div>
       <div class="page-footer">Page 3 of 3</div>
     </div>
