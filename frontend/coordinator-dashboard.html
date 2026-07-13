@@ -424,6 +424,15 @@
           </div>
           <p class="text-muted mb-4">Students who have raised problems are listed below. Select a student to review and fill your action &amp; signature.</p>
 
+          <!-- List of active problems -->
+          <div id="meeting-raised-list-container" style="display:none; margin-bottom:1.5rem; padding:1rem; border:2px solid rgba(239, 68, 68, 0.2); background:rgba(254, 242, 242, 0.5); border-radius:0.5rem;">
+            <div style="font-weight:700; color:var(--red-600); margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem">
+              <i data-lucide="alert-circle" style="width:1.1rem; height:1.1rem"></i>
+              <span>Students Awaiting Meeting Review (Problems Raised)</span>
+            </div>
+            <div id="meeting-raised-list" style="display:flex; gap:0.5rem; flex-wrap:wrap"></div>
+          </div>
+
           <!-- Student selector -->
           <div class="form-group" style="max-width:24rem">
             <label for="meeting-student-select" class="form-label">Select Student</label>
@@ -516,6 +525,9 @@
       ALL_TABS.forEach(t => { const el = document.getElementById(`tab-${t}`); if (el) el.style.display = t === tab ? '' : 'none'; });
       document.getElementById('tab-title').textContent = TAB_TITLES[tab] || tab;
       if (window.innerWidth <= 768) toggleSidebar(false);
+      if (tab === 'meetings' || tab === 'students' || tab === 'handbook') {
+        loadStudents();
+      }
     }
 
     document.querySelectorAll('.sidebar-link[data-tab]').forEach(link => {
@@ -602,14 +614,23 @@
         populateMeetingSelector(allStudents);
         populateHandbookSelector(allStudents);
         // Update overview stats
-        const pending = allStudents.reduce((n, s) => {
-          // count pending if student has discussion without action (rough check via id only — actual check in meeting view)
-          return n;
-        }, 0);
+        // Count students who have at least one discussion without a coordinator action
+        const pendingCount = allStudents.filter(s => {
+          const pd = s.profile_data || {};
+          const keys = Object.keys(pd);
+          for (let i = 1; i <= 6; i++) {
+            const discKey   = keys.find(k => k.toLowerCase() === `meeting_discussion_${i}`);
+            const actionKey = keys.find(k => k.toLowerCase() === `meeting_action_${i}`);
+            const hasDisc   = discKey   && pd[discKey]   && String(pd[discKey]).trim();
+            const hasAction = actionKey && pd[actionKey] && String(pd[actionKey]).trim();
+            if (hasDisc && !hasAction) return true;
+          }
+          return false;
+        }).length;
         const countEl = document.getElementById('overview-student-count');
         if (countEl) countEl.textContent = allStudents.length;
         const pendingEl = document.getElementById('overview-pending-count');
-        if (pendingEl) pendingEl.textContent = '................................';
+        if (pendingEl) pendingEl.textContent = pendingCount;
       } catch (error) {
         console.error('Failed to load students:', error);
       }
@@ -664,9 +685,59 @@
     // ── Meeting Reports ───────────────────────────────────────────────────────
     function populateMeetingSelector(students) {
       const sel = document.getElementById('meeting-student-select');
+      if (!sel) return;
       sel.innerHTML = '<option value="">-- Select a student --</option>' +
         students.map(s => `<option value="${s.id}">${escapeHtml(s.name)} (${escapeHtml(s.prn_number || s.email)})</option>`).join('');
+
+      // Find students who have raised problems but coordinator has NOT yet filled all actions
+      const raisedProblems = students.filter(s => {
+        const pd = s.profile_data || {};
+        const keys = Object.keys(pd);
+        for (let i = 1; i <= 6; i++) {
+          const discKey   = keys.find(k => k.toLowerCase() === `meeting_discussion_${i}`);
+          const actionKey = keys.find(k => k.toLowerCase() === `meeting_action_${i}`);
+          const hasDisc   = discKey   && pd[discKey]   && String(pd[discKey]).trim();
+          const hasAction = actionKey && pd[actionKey] && String(pd[actionKey]).trim();
+          // If there's a discussion with no action yet → student is still pending
+          if (hasDisc && !hasAction) {
+            return true;
+          }
+        }
+        return false;
+      });
+
+      const container = document.getElementById('meeting-raised-list-container');
+      const listEl = document.getElementById('meeting-raised-list');
+      const countEl = document.getElementById('meeting-pending-count');
+
+      if (countEl) {
+        countEl.textContent = raisedProblems.length > 0 ? `${raisedProblems.length} pending` : '';
+        countEl.className = raisedProblems.length > 0 ? 'panel-chip panel-chip-danger' : 'panel-chip panel-chip-neutral';
+      }
+
+      if (raisedProblems.length > 0) {
+        if (container) container.style.display = 'block';
+        if (listEl) {
+          listEl.innerHTML = raisedProblems.map(s => `
+            <button class="btn btn-dark" onclick="selectMeetingStudent(${s.id})" style="padding:0.4rem 0.8rem; font-size:0.88rem; display:inline-flex; align-items:center; gap:0.35rem">
+              <span style="display:inline-block; width:0.5rem; height:0.5rem; border-radius:50%; background:var(--red-500)"></span>
+              <span>${escapeHtml(s.name)}</span>
+            </button>
+          `).join('');
+        }
+      } else {
+        if (container) container.style.display = 'none';
+        if (listEl) listEl.innerHTML = '';
+      }
     }
+
+    window.selectMeetingStudent = function(studentId) {
+      const sel = document.getElementById('meeting-student-select');
+      if (sel) {
+        sel.value = studentId;
+        loadStudentMeeting(studentId);
+      }
+    };
 
     async function loadStudentMeeting(studentId) {
       const area = document.getElementById('meeting-report-area');
@@ -768,24 +839,6 @@
                 </tr>`).join('')}
               </tbody>
             </table>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
-            <div class="fas-field">
-              <span class="fas-field-label">Name &amp; Sign of Head of Department</span>
-              ${editMode
-                ? `<input name="Meeting_HOD_Sign" value="${escapeHtml(hodSign)}" class="edit-input" placeholder="Name / Signature">`
-                : `<span class="fas-field-value ${hodSign ? '' : 'fas-field-empty'}">${hodSign || '................................'}</span>`}
-            </div>
-            <div class="fas-field">
-              <span class="fas-field-label">Name &amp; Sign of Dean</span>
-              ${editMode
-                ? `<input name="Meeting_Dean_Sign" value="${escapeHtml(deanSign)}" class="edit-input" placeholder="Name / Signature">`
-                : `<span class="fas-field-value ${deanSign ? '' : 'fas-field-empty'}">${deanSign || '................................'}</span>`}
-            </div>
-          </div>
-          <div style="margin-top:1.25rem;padding:1.25rem;border:2px solid rgba(37,99,235,0.18);border-radius:1rem;background:rgba(239,246,255,0.6)">
-            <div style="font-weight:700;color:var(--blue-600);font-size:0.95rem;margin-bottom:1rem">For Official Use &nbsp;<span style="font-weight:400;font-size:0.78rem;color:var(--text-muted)">(To be Filled by Mentor)</span></div>
-            <div class="field-grid">${officialUseHTML}</div>
           </div>
         </form>`;
 

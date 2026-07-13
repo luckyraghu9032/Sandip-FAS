@@ -352,4 +352,52 @@ router.get('/overview', auth, async (req, res) => {
   }
 });
 
+router.get('/profile', auth, async (req, res) => {
+  try {
+    await ensureAppSchema();
+    if (!requireHod(req, res)) return;
+
+    const result = await db.query(
+      `SELECT name, email, department, profile_data FROM users WHERE id = $1 AND role = 'hod'`,
+      [req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'HOD profile not found.' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Fetch HOD profile error:', error);
+    res.status(500).json({ error: 'Failed to fetch HOD profile' });
+  }
+});
+
+router.patch('/profile', auth, async (req, res) => {
+  try {
+    await ensureAppSchema();
+    if (!requireHod(req, res)) return;
+
+    const { name, department, profileData } = req.body;
+    const sanitizedName = normalizeText(name);
+    const sanitizedDept = normalizeText(department);
+    const sanitizedProfile = sanitizeRecord(profileData) || {};
+
+    await db.query(
+      `UPDATE users
+       SET name = COALESCE($1, name),
+           department = COALESCE($2, department),
+           profile_data = COALESCE(profile_data, '{}'::jsonb) || $3::jsonb,
+           updated_at = CURRENT_TIMESTAMP
+       WHERE id = $4 AND role = 'hod'`,
+      [sanitizedName, sanitizedDept, sanitizedProfile, req.user.id]
+    );
+
+    res.json({ message: 'Profile updated successfully' });
+  } catch (error) {
+    console.error('Update HOD profile error:', error);
+    res.status(500).json({ error: 'Failed to update HOD profile' });
+  }
+});
+
 module.exports = router;

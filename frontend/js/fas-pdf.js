@@ -62,6 +62,7 @@ function buildFasHandbookHtml(student, opts = {}) {
   const studentRecord = student || {};
   const profile = profileGetter(studentRecord.profileData);
   const coordinator = profileGetter(opts.coordinatorProfile || {});
+  const hod = profileGetter(opts.hodProfile || {});
   const logoSrc = opts.logoSrc || FAS_TEMPLATE_ASSETS.logoStrip;
   const campusSrc = opts.campusSrc || FAS_TEMPLATE_ASSETS.campusPhoto;
   const detailHeaderSrc = opts.detailHeaderSrc || FAS_TEMPLATE_ASSETS.detailHeader;
@@ -72,6 +73,7 @@ function buildFasHandbookHtml(student, opts = {}) {
   const valueOrDots = (value, fallback = dots) => safe(value) || fallback;
   const profileValue = (...keys) => profile(...keys);
   const coordinatorValue = (...keys) => coordinator(...keys);
+  const hodName = raw(opts.hodProfile?.name) || hod('name', 'Name');
 
   const studentName = raw(studentRecord.name);
   const prnNumber = raw(studentRecord.prnNumber || studentRecord.prn_number);
@@ -414,7 +416,7 @@ function buildFasHandbookHtml(student, opts = {}) {
           <tbody>${meetingRows}</tbody>
         </table>
         <div class="meeting-footer">
-          <div>Name and Sign of the Head of the Department ${safe(profileValue('Meeting_HOD_Sign'))}</div>
+          <div>Name and Sign of the Head of the Department<br>${safe(hodName || profileValue('Meeting_HOD_Sign'))}</div>
           <div>Dean ${safe(profileValue('Meeting_Dean_Sign'))}</div>
         </div>
       </div>
@@ -480,6 +482,7 @@ window.generateFasPDFFromStudent = async function generateFasPDFFromStudent(stud
       campusSrc,
       detailHeaderSrc,
       coordinatorProfile: options.coordinatorProfile || {},
+      hodProfile: options.hodProfile || {},
     });
     const name = rawFilePart(studentRecord.name || 'student');
     const prn = rawFilePart(studentRecord.prnNumber || studentRecord.prn_number || 'FAS');

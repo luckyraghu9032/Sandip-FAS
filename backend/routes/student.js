@@ -57,6 +57,17 @@ router.get('/me', auth, async (req, res) => {
         coordinatorProfile = coordResult.rows[0].profile_data || {};
       }
     }
+    // Fetch HOD profile data
+    let hodProfile = {};
+    const hodResult = await db.query(
+      `SELECT name, profile_data FROM users WHERE role = 'hod' LIMIT 1`
+    );
+    if (hodResult.rows[0]) {
+      hodProfile = {
+        name: hodResult.rows[0].name,
+        ...(hodResult.rows[0].profile_data || {})
+      };
+    }
 
     res.json({
       student: {
@@ -74,6 +85,7 @@ router.get('/me', auth, async (req, res) => {
         data: row.form_data || {},
       } : null,
       coordinatorProfile: coordinatorProfile,
+      hodProfile: hodProfile,
     });
   } catch (error) {
     console.error('Student profile error:', error);

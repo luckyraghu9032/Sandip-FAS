@@ -363,7 +363,7 @@ router.get('/students', auth, async (req, res) => {
     }
 
     const result = await db.query(
-      `SELECT id, name, email, prn_number
+      `SELECT id, name, email, prn_number, profile_data
        FROM users
        WHERE role = 'student' AND division = $1
        ORDER BY LOWER(COALESCE(name, email)) ASC`,
@@ -375,6 +375,7 @@ router.get('/students', auth, async (req, res) => {
       name: row.name,
       email: row.email,
       prn_number: row.prn_number || '',
+      profile_data: row.profile_data || {},
     })));
   } catch (error) {
     console.error('Fetch students error:', error);
@@ -639,6 +640,19 @@ router.get('/students/by-prn/:prn', auth, async (req, res) => {
     }
 
     const row = result.rows[0];
+    
+    // Fetch HOD profile data
+    let hodProfile = {};
+    const hodResult = await db.query(
+      `SELECT name, profile_data FROM users WHERE role = 'hod' LIMIT 1`
+    );
+    if (hodResult.rows[0]) {
+      hodProfile = {
+        name: hodResult.rows[0].name,
+        ...(hodResult.rows[0].profile_data || {}),
+      };
+    }
+
     res.json({
       id: row.id,
       name: row.name,
@@ -647,6 +661,7 @@ router.get('/students/by-prn/:prn', auth, async (req, res) => {
       division: row.division || '',
       department: row.department || '',
       profileData: row.profile_data || {},
+      hodProfile: hodProfile
     });
   } catch (error) {
     console.error('Get student by PRN error:', error);
@@ -673,6 +688,17 @@ router.get('/students/:id/profile', auth, async (req, res) => {
     if (!result.rows.length) return res.status(404).json({ error: 'Student not found.' });
 
     const row = result.rows[0];
+    // Fetch HOD profile data
+    let hodProfile = {};
+    const hodResult = await db.query(
+      `SELECT name, profile_data FROM users WHERE role = 'hod' LIMIT 1`
+    );
+    if (hodResult.rows[0]) {
+      hodProfile = {
+        name: hodResult.rows[0].name,
+        ...(hodResult.rows[0].profile_data || {}),
+      };
+    }
     res.json({
       id: row.id,
       name: row.name,
@@ -681,6 +707,7 @@ router.get('/students/:id/profile', auth, async (req, res) => {
       division: row.division || '',
       department: row.department || '',
       profileData: row.profile_data || {},
+      hodProfile: hodProfile,
     });
   } catch (error) {
     console.error('Get student profile error:', error);

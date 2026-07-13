@@ -318,7 +318,7 @@ function renderCoordMeeting(s) {
     <div class="handbook-card" style="margin-top:1rem">
       <div class="handbook-card-title">Signatures</div>
       <div class="field-grid">
-        ${chField('Name & Sign of Head of Department', g('Meeting_HOD_Sign'))}
+        ${chField('Name & Sign of Head of Department', s.hodProfile?.name || g('Meeting_HOD_Sign'))}
         ${chField('Name & Sign of Dean', g('Meeting_Dean_Sign'))}
       </div>
     </div>`;

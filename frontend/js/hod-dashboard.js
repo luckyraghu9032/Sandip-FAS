@@ -5,6 +5,18 @@
     return;
   }
 
+  const SECTIONS = ['overview', 'coordinators', 'profile'];
+
+  function showSection(id) {
+    SECTIONS.forEach(s => {
+      const el = document.getElementById(s);
+      if (el) el.style.display = s === id ? '' : 'none';
+    });
+    
+    const profileEl = document.getElementById('profile');
+    if (profileEl) profileEl.style.marginTop = id === 'profile' ? '0' : '2rem';
+  }
+
   const DIVISIONS = Array.from({ length: 26 }, (_, index) => String.fromCharCode(65 + index));
 
   const state = {
@@ -65,26 +77,101 @@
     renderAll();
     lucide.createIcons();
     loadCoordinatorRoster();
+    loadHodProfile();
+    showSection('overview');
+  }
+
+  async function loadHodProfile() {
+    try {
+      const res = await fetch(`${API_BASE}/api/hod/profile`, {
+        headers: { 'x-auth-token': localStorage.getItem('token') },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        document.getElementById('hod-profile-name').value = data.name || '';
+        document.getElementById('hod-profile-department').value = data.department || '';
+        document.getElementById('hod-profile-school').value = (data.profile_data && data.profile_data.School) || '';
+      }
+    } catch (err) {
+      console.error('Failed to load HOD profile', err);
+    }
+  }
+
+  async function handleHodProfileSubmit(e) {
+    e.preventDefault();
+    const name = document.getElementById('hod-profile-name').value.trim();
+    const department = document.getElementById('hod-profile-department').value.trim();
+    const school = document.getElementById('hod-profile-school').value.trim();
+
+    const errorEl = document.getElementById('hod-profile-error');
+    const successEl = document.getElementById('hod-profile-success');
+    const btn = document.getElementById('save-hod-profile-btn');
+
+    errorEl.style.display = 'none';
+    successEl.style.display = 'none';
+    const originalBtn = btn.innerHTML;
+    btn.innerHTML = '<span>Saving...</span>';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/hod/profile`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': localStorage.getItem('token')
+        },
+        body: JSON.stringify({
+          name,
+          department,
+          profileData: { School: school }
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to save profile');
+
+      successEl.textContent = 'Profile updated successfully!';
+      successEl.style.display = 'block';
+
+      currentUser.name = name;
+      elements.userDisplayName.textContent = name;
+      localStorage.setItem('user', JSON.stringify({ ...currentUser, name, department }));
+    } catch (err) {
+      errorEl.textContent = err.message;
+      errorEl.style.display = 'block';
+    } finally {
+      btn.innerHTML = originalBtn;
+      btn.disabled = false;
+    }
   }
 
   function bindEvents() {
     elements.manualCoordinatorForm.addEventListener('submit', handleManualCoordinatorSubmit);
+    const hodProfileForm = document.getElementById('hod-profile-form');
+    if (hodProfileForm) hodProfileForm.addEventListener('submit', handleHodProfileSubmit);
     elements.coordinatorRosterSearch.addEventListener('input', handleCoordinatorRosterSearch);
     elements.coordinatorRosterBody.addEventListener('change', handleRosterDivisionChange);
-    elements.previewPayloadBtn.addEventListener('click', openPayloadPreview);
-    elements.confirmSyncBtn.addEventListener('click', syncAllocations);
-    elements.closePayloadBtn.addEventListener('click', closePayloadPreview);
-    elements.payloadCloseAction.addEventListener('click', closePayloadPreview);
-    elements.payloadModal.addEventListener('click', (event) => {
-      if (event.target === elements.payloadModal) {
-        closePayloadPreview();
-      }
-    });
+    if (elements.previewPayloadBtn) elements.previewPayloadBtn.addEventListener('click', openPayloadPreview);
+    if (elements.confirmSyncBtn) elements.confirmSyncBtn.addEventListener('click', syncAllocations);
+    if (elements.closePayloadBtn) elements.closePayloadBtn.addEventListener('click', closePayloadPreview);
+    if (elements.payloadCloseAction) elements.payloadCloseAction.addEventListener('click', closePayloadPreview);
+    if (elements.payloadModal) {
+      elements.payloadModal.addEventListener('click', (event) => {
+        if (event.target === elements.payloadModal) {
+          closePayloadPreview();
+        }
+      });
+    }
 
     elements.sidebarLinks.forEach((link) => {
-      link.addEventListener('click', () => {
+      link.addEventListener('click', (e) => {
+        // e.preventDefault();
         elements.sidebarLinks.forEach((item) => item.classList.remove('active'));
         link.classList.add('active');
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          showSection(href.substring(1));
+        }
         toggleSidebar(false);
       });
     });
@@ -308,7 +395,6 @@
     renderCoordinatorRoster();
     renderAllocationTable();
     renderReports();
-    renderPayloadSummary();
   }
 
   function renderStats() {
@@ -436,6 +522,7 @@
   }
 
   function renderReports() {
+    if (!elements.reportChip || !elements.reportList) return;
     elements.reportChip.textContent = `${state.pendingReports.length} pending`;
 
     if (!state.pendingReports.length) {

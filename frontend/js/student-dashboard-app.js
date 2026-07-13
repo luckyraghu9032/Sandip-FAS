@@ -3,6 +3,7 @@
 let studentData = null;
 let fasData = null;
 let coordinatorProfile = null;
+let hodProfile = null;
 
 // â”€â”€ Section navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const SECTIONS = ['handbook', 'profile', 'academic', 'mentor-info', 'meeting', 'vision', 'fas'];
@@ -452,10 +453,13 @@ function renderAcademic(editMode = false) {
     return `<div class="handbook-card" style="margin-top:1rem;border:2px solid rgba(37,99,235,0.18);background:rgba(239,246,255,0.6)">
       <div class="handbook-card-title" style="color:var(--blue-600)">For Official Use &nbsp;<span style="font-weight:400;font-size:0.78rem;color:var(--text-muted)">(Filled by Mentor â€” read only)</span></div>
       <div class="field-grid">
-        ${classes.map(c => `<div class="fas-field">
-          <span class="fas-field-label">${c.label}</span>
-          <span class="fas-field-value ${g(c.yk) ? '' : 'fas-field-empty'}">Academic Year: ${g(c.yk) || '................................'}</span>
-        </div>`).join('')}
+        ${classes.map(c => {
+          const val = (coordinatorProfile && coordinatorProfile[c.yk]) || '';
+          return `<div class="fas-field">
+            <span class="fas-field-label">${c.label}</span>
+            <span class="fas-field-value ${val ? '' : 'fas-field-empty'}">Academic Year: ${val || '................................'}</span>
+          </div>`;
+        }).join('')}
       </div>
     </div>`;
   };
@@ -602,6 +606,7 @@ function renderMeeting(editMode = false) {
     return '';
   };
 
+  const studentName = pd.name || '';
   const rowCount = 6;
   const rows = Array.from({ length: rowCount }, (_, i) => ({
     no:    `Meeting_No_${i+1}`,
@@ -635,7 +640,7 @@ function renderMeeting(editMode = false) {
       <div>${editMode ? saveBtn : editBtn}</div>
     </div>
     <div class="handbook-badge" style="margin-bottom:1rem">
-      â„¹ï¸ Your entries: Meeting No, Date, Discussion, Student Sign. Mentor fills Action &amp; Sign.
+      â„¹ï¸  Your entries: Meeting No, Date, Discussion, Student Sign. Mentor fills Action &amp; Sign.
     </div>
     <div id="meeting-save-msg"></div>
     <form id="meeting-edit-form" onsubmit="return false">
@@ -645,6 +650,7 @@ function renderMeeting(editMode = false) {
             <thead>
               <tr>
                 <th>Meeting No.</th>
+                <th>Student Name</th>
                 <th>Meeting Date</th>
                 <th>Discussions / Suggestions / Problems</th>
                 <th>Student Sign</th>
@@ -655,6 +661,7 @@ function renderMeeting(editMode = false) {
             <tbody>
               ${rows.map(r => `<tr>
                 <td>${sCell(r.no,    'No.',       '3rem')}</td>
+                <td><span style="color:var(--emerald-600);font-weight:600">${studentName}</span></td>
                 <td>${sCell(r.date,  'DD/MM/YYYY','7rem')}</td>
                 <td>${sCell(r.disc,  'Discussion','10rem')}</td>
                 <td>${sCell(r.ssign, 'Sign',      '5rem')}</td>
@@ -670,7 +677,7 @@ function renderMeeting(editMode = false) {
         <div class="field-grid">
           <div class="fas-field">
             <span class="fas-field-label">Name &amp; Sign of Head of Department</span>
-            <span class="fas-field-value ${g('Meeting_HOD_Sign') ? '' : 'fas-field-empty'}">${g('Meeting_HOD_Sign') || '................................'}</span>
+            <span class="fas-field-value ${hodProfile?.name || g('Meeting_HOD_Sign') ? '' : 'fas-field-empty'}">${hodProfile?.name || g('Meeting_HOD_Sign') || '................................'}</span>
           </div>
           <div class="fas-field">
             <span class="fas-field-label">Name &amp; Sign of Dean</span>
@@ -822,6 +829,7 @@ window.generateFasPDF = async function() {
     btnDefaultHtml: '<span>Download FAS PDF</span>',
     btnLoadingHtml: '<span>Generating PDF...</span>',
     coordinatorProfile: coordinatorProfile,
+    hodProfile: hodProfile,
   });
 };
 
@@ -834,6 +842,7 @@ async function loadStudentData() {
     studentData = data.student;
     fasData     = data.fasRecord;
     coordinatorProfile = data.coordinatorProfile || {};
+    hodProfile  = data.hodProfile || {};
     renderAll();
     if (loadingEl) loadingEl.style.display = 'none';
   } catch (err) {

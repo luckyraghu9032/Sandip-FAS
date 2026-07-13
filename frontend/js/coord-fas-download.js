@@ -47,6 +47,7 @@ window.downloadCoordFasByPrn = async function downloadCoordFasByPrn() {
       btnDefaultHtml: '<span>Download FAS PDF</span>',
       btnLoadingHtml: '<span>Generating PDF…</span>',
       coordinatorProfile: coordinatorProfile || {},
+      hodProfile: data.hodProfile || {},
     });
 
     successEl.textContent = 'FAS handbook downloaded for ' + data.name + '.';
