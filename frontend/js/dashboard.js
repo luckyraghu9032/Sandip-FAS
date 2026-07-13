@@ -1,6 +1,6 @@
 // Shared Dashboard Logic
 
-const API_BASE = window.location.origin === 'http://localhost:5001' ? 'http://localhost:5001' : 'https://sandip-fas-backend.onrender.com';
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:5001' : 'https://sandip-fas-backend.onrender.com';
 
 function getInitials(name) {
   if (!name) return '??';
