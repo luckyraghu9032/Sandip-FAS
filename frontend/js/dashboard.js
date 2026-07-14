@@ -1,6 +1,13 @@
 // Shared Dashboard Logic
 
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:5001' : 'https://sandip-fas-backend.onrender.com';
+const API_BASE = (function () {
+  // Running on Vercel (or any non‑localhost host) → use the Render API endpoint
+  if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return 'https://sandip-fas-aiandml.onrender.com';   // <-- will be your Render URL
+  }
+  // Local development
+  return 'http://localhost:5001';
+})();
 
 function getInitials(name) {
   if (!name) return '??';
