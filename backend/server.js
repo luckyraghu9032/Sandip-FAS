@@ -12,7 +12,7 @@ const whitelist = [
   'http://127.0.0.1:3000',
   'http://localhost:5500',                 // live server
   'http://127.0.0.1:5500',
-  'https://https://sandip-fas-aiandml.vercel.app' // production front‑end
+  'https://sandip-fas-aiandml.vercel.app' // production front‑end
 ];
 const corsOptions = {
   origin: (origin, callback) => {
