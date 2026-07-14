@@ -32,7 +32,7 @@ app.use('/api/notifications', notificationRoutes);
 
 // Basic health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'Backend is running and connected to Neon' });
+  res.json({ status: 'sandip-fas-backend is running and connected to Neon' });
 });
 
 // NOTE: static files are served by Render Static Site (sandip-fas-frontend)

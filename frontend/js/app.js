@@ -1,15 +1,11 @@
 // Initialize Lucide Icons
 lucide.createIcons();
 
-// Replace the Vercel URL with your new Render URL
-/* frontend/js/* – replace any existing API_BASE definition with this */
 const API_BASE = (function () {
-  // Vercel or any non‑localhost host → use the Render API endpoint
   if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    return 'https://sandip-fas-aiandml.onrender.com';   // <-- Render API URL
+    return 'https://sandip-fas-backend.onrender.com';   // Render backend API
   }
-  // Local development
-  return 'http://localhost:5001';
+  return 'http://localhost:5001'; // local development
 })();
 
 
