@@ -35,7 +35,7 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'Backend is running and connected to Neon' });
 });
 
-// NOTE: static files are now served by Vercel
+// NOTE: static files are served by Render Static Site (sandip-fas-frontend)
 
 app.use((err, req, res, next) => {
   const isJsonParseError = err instanceof SyntaxError && err.type === 'entity.parse.failed';

@@ -1,0 +1,38 @@
+services:
+  # ─── Backend: Node.js Web Service ──────────────────────────────────────────
+  - type: web
+    name: sandip-fas-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Add your real secrets in the Render Dashboard (Environment tab)
+      # Do NOT put actual secret values here
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+
+  # ─── Frontend: Static Site ─────────────────────────────────────────────────
+  - type: web
+    name: sandip-fas-frontend
+    env: static
+    rootDir: frontend
+    staticPublishPath: .
+    # No build command needed – pure HTML/CSS/JS
+    buildCommand: ""
+    routes:
+      # Serve actual .html, .css, .js, assets directly
+      # Only fall back to index.html for unknown paths (no extension)
+      - type: rewrite
+        source: /hod-dashboard.html
+        destination: /hod-dashboard.html
+      - type: rewrite
+        source: /coordinator-dashboard.html
+        destination: /coordinator-dashboard.html
+      - type: rewrite
+        source: /student-dashboard.html
+        destination: /student-dashboard.html
