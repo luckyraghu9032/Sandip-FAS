@@ -2,7 +2,15 @@
 lucide.createIcons();
 
 // Replace the Vercel URL with your new Render URL
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:5001' : 'https://sandip-fas-backend.onrender.com';
+/* frontend/js/* – replace any existing API_BASE definition with this */
+const API_BASE = (function () {
+  // Running on Vercel (or any non‑localhost host) → use the Render API endpoint
+  if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return 'https://sandip-fas-backend.onrender.com';   // <-- will be your Render URL
+  }
+  // Local development
+  return 'http://localhost:5001';
+})();
 
 // Mobile Menu Toggle
 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
