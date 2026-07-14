@@ -7,20 +7,10 @@ const { ensureAppSchema } = require('./utils/schema');
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-const whitelist = [
-  'http://localhost:3000',                 // local dev
-  'http://127.0.0.1:3000',
-  'http://localhost:5500',                 // live server
-  'http://127.0.0.1:5500',
-  'https://sandip-fas-aiandml.vercel.app' // production front‑end
-];
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || whitelist.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
+  origin: function (origin, callback) {
+    // Allow all origins
+    callback(null, true);
   },
   credentials: true
 };
