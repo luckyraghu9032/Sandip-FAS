@@ -3,7 +3,7 @@ lucide.createIcons();
 
 const API_BASE = (function () {
   if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    return 'https://sandip-fas-backend.onrender.com';   // Render backend API
+    return 'https://sandip-fas-aiandml.onrender.com';   // Render backend API
   }
   return 'http://localhost:5001'; // local development
 })();

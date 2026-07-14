@@ -1,7 +1,8 @@
 services:
   # ─── Backend: Node.js Web Service ──────────────────────────────────────────
+  # URL: https://sandip-fas-aiandml.onrender.com
   - type: web
-    name: sandip-fas-backend
+    name: sandip-fas-aiandml
     env: node
     rootDir: backend
     buildCommand: npm install
@@ -9,24 +10,20 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      # Add your real secrets in the Render Dashboard (Environment tab)
-      # Do NOT put actual secret values here
       - key: DATABASE_URL
         sync: false
       - key: JWT_SECRET
         sync: false
 
   # ─── Frontend: Static Site ─────────────────────────────────────────────────
+  # URL: https://sandip-fas-backend.onrender.com
   - type: web
-    name: sandip-fas-frontend
+    name: sandip-fas-backend
     env: static
     rootDir: frontend
     staticPublishPath: .
-    # No build command needed – pure HTML/CSS/JS
     buildCommand: ""
     routes:
-      # Serve actual .html, .css, .js, assets directly
-      # Only fall back to index.html for unknown paths (no extension)
       - type: rewrite
         source: /hod-dashboard.html
         destination: /hod-dashboard.html

@@ -7,10 +7,22 @@ const { ensureAppSchema } = require('./utils/schema');
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+const ALLOWED_ORIGINS = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'http://localhost:5500',        // VS Code Live Server
+  'http://127.0.0.1:5500',
+  'https://sandip-fas-backend.onrender.com',  // Render frontend static site
+];
+
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow all origins
-    callback(null, true);
+    // Allow requests with no origin (mobile apps, curl, Postman)
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS: origin '${origin}' not allowed`));
+    }
   },
   credentials: true
 };
