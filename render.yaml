@@ -23,13 +23,3 @@ services:
     rootDir: frontend
     staticPublishPath: .
     buildCommand: ""
-    routes:
-      - type: rewrite
-        source: /hod-dashboard.html
-        destination: /hod-dashboard.html
-      - type: rewrite
-        source: /coordinator-dashboard.html
-        destination: /coordinator-dashboard.html
-      - type: rewrite
-        source: /student-dashboard.html
-        destination: /student-dashboard.html
