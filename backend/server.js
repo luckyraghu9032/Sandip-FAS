@@ -7,7 +7,25 @@ const { ensureAppSchema } = require('./utils/schema');
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-app.use(cors());
+const whitelist = [
+  'http://localhost:3000',                 // local dev
+  'http://127.0.0.1:3000',
+  'http://localhost:5500',                 // live server
+  'http://127.0.0.1:5500',
+  'https://https://sandip-fas-aiandml.vercel.app' // production front‑end
+];
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || whitelist.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Routes
@@ -27,10 +45,7 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'Backend is running and connected to Neon' });
 });
 
-// Serve static frontend files
-app.use('/css', express.static(path.join(__dirname, '../frontend/css')));
-app.use(express.static(path.join(__dirname, '../frontend')));
-app.use('/public', express.static(path.join(__dirname, '../public')));
+// NOTE: static files are now served by Vercel
 
 app.use((err, req, res, next) => {
   const isJsonParseError = err instanceof SyntaxError && err.type === 'entity.parse.failed';
